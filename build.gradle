@@ -1,11 +1,19 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.github.johnrengelman.shadow'
 }
 
 group = 'games.dripdrop'
 version = '1.0-SNAPSHOT'
 
 repositories {
+    maven {
+        name = "minebench"
+        url = "https://repo.minebench.de/"
+    }
     maven {
         name = "tencent maven mirror"
         url = "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/"
@@ -22,14 +30,18 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT"
+    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+
+    implementation("org.xerial:sqlite-jdbc:3.46.0.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
@@ -43,6 +55,14 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+tasks.withType(ShadowJar).configureEach {
+    relocate("kotlinx", "games.dripdrop.lib.kotlinx")
+    relocate("kotlin", "games.dripdrop.lib.kotlin")
+    relocate("org.intellij", "games.dripdrop.lib.org.intellij")
+    relocate("org.jetbrains", "games.dripdrop.lib.org.jetbrains")
+    relocate("com.google.gson", "games.dripdrop.lib.com.google.gson")
+}
+
 processResources {
     def props = [version: version]
     inputs.properties props
@@ -50,4 +70,8 @@ processResources {
     filesMatching('paper-plugin.yml') {
         expand props
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
