@@ -1,0 +1,11 @@
+name: SimuStock
+version: '${version}'
+main: games.dripdrop.simustock.SimuStockPlugin
+api-version: '1.20'
+prefix: SimuStock
+load: STARTUP
+dependencies:
+  - name: Vault
+    required: true
+authors: [Dell_G3]
+description: A simulated stock market for DripDrop
