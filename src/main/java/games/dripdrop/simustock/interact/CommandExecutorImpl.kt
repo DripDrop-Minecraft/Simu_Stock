@@ -20,4 +20,8 @@ internal class CommandExecutorImpl : ICommand {
         TODO("Not yet implemented")
     }
 
+    override fun sendMessageToPlayer(content: String) {
+        TODO("Not yet implemented")
+    }
+
 }
