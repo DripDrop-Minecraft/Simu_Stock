@@ -18,7 +18,5 @@ data class Order(
     // 每股交易单价
     var dealingPrice: Float,
     // 买入或卖出
-    var isBuying: Boolean,
-    // 订单交易是否成功
-    var isSuccess: Boolean
+    var isBuying: Boolean
 )

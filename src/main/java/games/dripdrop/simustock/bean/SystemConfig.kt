@@ -10,5 +10,13 @@ data class SystemConfig(
     // 服务器券商名称
     var securitiesDealerName: String = "DripDrop信投",
     // 有权限玩家
-    var administrators: List<String> = arrayListOf("CONSOLE")
+    var administrators: List<String> = arrayListOf("CONSOLE"),
+    // 数据库账号
+    var databaseAccount: String = "",
+    // 数据库账号密码
+    var databasePassword: String = "",
+    // 数据库地址
+    var databaseAddress: String = "localhost:3306",
+    // 节假日，如果不为空则全天休市
+    var holiday: String = ""
 )
