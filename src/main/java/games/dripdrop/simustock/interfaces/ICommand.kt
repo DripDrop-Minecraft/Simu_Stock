@@ -14,4 +14,7 @@ interface ICommand {
 
     // 重载配置
     fun reloadConfig()
+
+    // 发送消息给玩家
+    fun sendMessageToPlayer(content: String)
 }
