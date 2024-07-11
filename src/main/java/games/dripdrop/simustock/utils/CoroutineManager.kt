@@ -34,6 +34,8 @@ object CoroutineManager {
         }
     }
 
+    fun getJob(tag: String): Job? = mCoroutineMap[tag]
+
     fun cancelJob(tag: String) {
         PluginLogManager.i("cancel an async task [$tag]")
         mCoroutineMap[tag]?.cancel()
