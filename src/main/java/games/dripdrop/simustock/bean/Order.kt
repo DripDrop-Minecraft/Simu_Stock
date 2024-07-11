@@ -16,7 +16,7 @@ data class Order(
     // 交易手数
     var dealingAmount: Int,
     // 每股交易单价
-    var dealingPrice: Float,
+    var dealingPrice: Double,
     // 买入或卖出
     var isBuying: Boolean
 )

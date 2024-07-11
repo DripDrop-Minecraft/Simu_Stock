@@ -1,10 +1,10 @@
 package games.dripdrop.simustock.bean
 
 data class Company(
-    // 公司名称
-    var name: String,
     // 股票代码
     var stockCode: String,
+    // 公司名称
+    var name: String,
     // 公司描述
     var desc: String,
     // 当前可购买股票数量
@@ -15,15 +15,5 @@ data class Company(
     var isListed: Boolean,
     // 风险等级
     var riskLevel: Int
-)
 
-enum class RiskLevel(val risk: Int) {
-    // 欺诈型
-    FRAUD(4),
-    // 高风险
-    HIGH(2),
-    // 中等风险
-    MIDDLE(1),
-    // 低风险
-    LOW(0)
-}
+)

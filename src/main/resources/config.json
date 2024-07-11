@@ -1,0 +1,12 @@
+{
+  "commissionRate": 0.0015,
+  "stampDutyRate": 0.001,
+  "exchangeName": "DripDrop证券交易所",
+  "securitiesDealerName": "DripDrop信投",
+  "administrators": [
+    "CONSOLE"
+  ],
+  "databaseAccount": "",
+  "databasePassword": "",
+  "holiday": ""
+}
