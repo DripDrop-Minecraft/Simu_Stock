@@ -1,62 +1,34 @@
 package games.dripdrop.simustock.interfaces
 
-import games.dripdrop.simustock.bean.Company
-import games.dripdrop.simustock.bean.Order
-import games.dripdrop.simustock.bean.ShareHoldingInfo
-import games.dripdrop.simustock.bean.Statics
-import org.bukkit.entity.Player
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import com.zaxxer.hikari.util.IsolationLevel
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 interface IDatabase {
     // 初始化数据库连接
-    fun initDatabaseConnection(driver: String, url: String): Connection?
+    fun initDatabase(config: HikariConfig)
 
-    // 创建数据库
-    fun createDatabase()
+    // 销毁数据库连接
+    fun deinitDatabase()
 
-    // 执行SQL语句
-    fun executeSQLStatement(sql: String): ResultSet?
+    // 获取连接池
+    fun getDataSource(): HikariDataSource?
 
-    // 创建公司
-    fun createCompanies(vararg companies: Company): Boolean
+    // 执行SQL语句查询
+    fun Connection.query(sql: String, map: Map<Int, Any>, callback: (ResultSet) -> Unit)
 
-    // 通过股票代码删除公司
-    fun deleteCompanyByCode(stockCode: String): Boolean
+    // 执行SQL语句更新
+    fun Connection.update(sql: String, map: Map<Int, Any>, callback: (Int) -> Unit)
 
-    // 查询所有公司信息
-    fun queryAllCompanies(): List<Company?>
+    // 批量执行SQL语句
+    fun Connection.batch(sql: String, callback: (PreparedStatement) -> Unit)
 
-    // 通过名称查询特定公司信息
-    fun querySpecifiedCompanyByName(stockName: String): List<Company?>
-
-    // 通过股票代码查询特定公司信息
-    fun querySpecifiedCompanyByCode(stockCode: String): Company?
-
-    // 修改特定公司信息
-    fun updateSpecifiedCompanyInfo(company: Company): Boolean
-
-    // 保存交易订单
-    fun createOrders(vararg orders: Order)
-
-    // 删除所有交易订单
-    fun deleteAllOrders()
-
-    // 查询某一玩家名下所有订单
-    fun queryOrdersByPlayer(player: Player): List<Order?>
-
-    // 通过名称查询某一玩家所持特定公司股票情况
-    fun queryShareHoldingInfoByPlayerAndStockName(player: Player, stockName: String): ShareHoldingInfo?
-
-    // 通过代码查询某一玩家所持特定公司股票情况
-    fun queryShareHoldingInfoByPlayerAndStockCode(player: Player, stockCode: String): ShareHoldingInfo?
-
-    // 查询某一玩家名下持股情况
-    fun queryStaticsByPlayer(player: Player): Statics?
-
-    // 查询某一玩家名下特定股票代码订单
-    fun queryOrdersByPlayerAndStockCode(player: Player, stockCode: String): List<Order?>
-
-    // 通过订单号查询特定订单
-    fun queryOrderByNumber(orderNumber: String): Order?
+    // 执行SQL语句事务
+    fun Connection.issueTransaction(
+        isolationLevel: IsolationLevel = IsolationLevel.TRANSACTION_REPEATABLE_READ,
+        transaction: () -> Unit
+    )
 }

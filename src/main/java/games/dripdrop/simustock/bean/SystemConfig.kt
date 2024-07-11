@@ -15,8 +15,6 @@ data class SystemConfig(
     var databaseAccount: String = "",
     // 数据库账号密码
     var databasePassword: String = "",
-    // 数据库地址
-    var databaseAddress: String = "localhost:3306",
     // 节假日，如果不为空则全天休市
     var holiday: String = ""
 )
