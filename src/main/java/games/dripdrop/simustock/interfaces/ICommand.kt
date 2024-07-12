@@ -17,4 +17,7 @@ interface ICommand {
 
     // 发送消息给玩家
     fun sendMessageToPlayer(content: String)
+
+    // 导入公司列表
+    fun importCompanies()
 }
