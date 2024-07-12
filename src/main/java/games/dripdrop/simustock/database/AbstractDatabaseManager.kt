@@ -3,6 +3,7 @@ package games.dripdrop.simustock.database
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.util.IsolationLevel
+import games.dripdrop.simustock.bean.ColumnProp
 import games.dripdrop.simustock.interfaces.IDatabase
 import games.dripdrop.simustock.utils.PluginLogManager
 import java.sql.Connection
@@ -35,7 +36,9 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     override fun getDataSource(): HikariDataSource? = mDataSource.apply {
-        PluginLogManager.i("is data source null: ${this == null}")
+        if (this == null) {
+            PluginLogManager.i("data source is null")
+        }
     }
 
     override fun Connection.query(
@@ -102,4 +105,18 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     abstract fun createTables()
+
+    protected fun createTableCreatingSQL(tableName: String, vararg columnProps: ColumnProp): String {
+        return StringBuilder("CREATE TABLE IF NOT EXISTS ")
+            .append(tableName)
+            .append(" (")
+            .apply {
+                columnProps.forEach {
+                    append("${it.columnName} ${it.columnType}${(" ${it.columnConstraint}").ifEmpty { "" }}, ")
+                }
+            }
+            .append(")")
+            .toString()
+            .replace(", )", ")")
+    }
 }
