@@ -15,7 +15,7 @@ public final class SimuStockPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         mLogger.i("SimuStockPlugin is enabled now");
-        mService.runSimulatedStockMarket();
+        mService.runSimulatedStockMarket(this);
         mLogger.i("register event listener...");
         getServer().getPluginManager().registerEvents(mEventListener, this);
     }
