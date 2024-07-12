@@ -1,23 +1,13 @@
 package games.dripdrop.simustock.utils
 
-import java.util.logging.Level
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 object PluginLogManager {
-    private const val TAG = "SimuStock"
-    private val mLogger = Logger.getLogger(TAG)
+    private val mLogger = LoggerFactory.getLogger(javaClass.simpleName)
 
-    fun v(msg: String) = log(Level.ALL, msg)
+    fun i(msg: String) = mLogger.info(msg)
 
-    fun i(msg: String) = log(Level.INFO, msg)
+    fun w(msg: String) = mLogger.warn(msg)
 
-    fun c(msg: String) = log(Level.CONFIG, msg)
-
-    fun w(msg: String) = log(Level.WARNING, msg)
-
-    fun e(msg: String) = log(Level.SEVERE, msg)
-
-    private fun log(level: Level, msg: String) {
-        mLogger.log(level, "$TAG  $msg")
-    }
+    fun e(msg: String) = mLogger.error(msg)
 }
