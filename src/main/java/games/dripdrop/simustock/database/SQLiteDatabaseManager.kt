@@ -3,6 +3,7 @@ package games.dripdrop.simustock.database
 import com.zaxxer.hikari.HikariConfig
 import games.dripdrop.simustock.bean.*
 import games.dripdrop.simustock.center.SystemService
+import games.dripdrop.simustock.utils.PluginLogManager
 import games.dripdrop.simustock.utils.UniqueIDManager
 
 class SQLiteDatabaseManager : AbstractDatabaseManager() {
@@ -27,32 +28,37 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         getDataSource()?.connection?.batch(createInsertAllDataSQL<Company>()) { ps ->
             SystemService.getCompanies().onEach {
                 if (it != null) {
-                    ps.setString(1, it.stockCode)
-                    ps.setString(2, it.name)
-                    ps.setString(3, it.desc)
-                    ps.setInt(4, it.currentStockNum)
-                    ps.setDouble(5, it.currentPrice)
-                    ps.setBoolean(6, it.isListed)
-                    ps.setInt(7, it.riskLevel)
+                    listOf(
+                        it.stockCode, it.name, it.desc, it.currentStockNum,
+                        it.currentPrice, it.isListed, it.riskLevel
+                    ).apply { ps.setAllPropsOnce<Company>(this) }
                     ps.addBatch()
                 }
             }
         }
     }
 
+    fun updateCompanyInfo(stockCode: String, map: Map<String, Any>) {
+        val sql = createUpdateWithConditionSQL<Company>(map)
+            .append("stockCode = ?")
+            .toString()
+        val sqlMap = linkedMapOf<Int, Any>().apply {
+            map.onEachIndexed { index, entry ->
+                put(index + 1, entry.value)
+            }
+            put(map.size + 1, stockCode)
+        }
+        getDataSource()?.connection?.update(sql, sqlMap) { PluginLogManager.i("update result: $it") }
+    }
+
     fun insertOrders(vararg orders: Order) {
         getDataSource()?.connection?.batch(createInsertAllDataSQL<Order>()) { ps ->
             orders.onEach {
-                ps.setString(1, it.orderNumber)
-                ps.setLong(2, it.timestamp)
-                ps.setString(3, it.stockName)
-                ps.setString(4, it.stockCode)
-                ps.setString(5, it.orderNumber)
-                ps.setString(6, it.investorName)
-                ps.setString(7, it.investorUUID)
-                ps.setInt(8, it.dealingAmount)
-                ps.setDouble(9, it.dealingPrice)
-                ps.setBoolean(10, it.isBuying)
+                listOf(
+                    it.orderNumber, it.timestamp, it.stockName, it.stockCode,
+                    it.investorName, it.investorUUID, it.dealingAmount,
+                    it.dealingPrice, it.isBuying
+                ).apply { ps.setAllPropsOnce<Order>(this) }
                 ps.addBatch()
             }
         }
@@ -61,15 +67,11 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
     fun insertAssets(vararg assets: Asset) {
         getDataSource()?.connection?.batch(createInsertAllDataSQL<Asset>()) { ps ->
             assets.onEach {
-                ps.setString(1, it.stockCode)
-                ps.setString(2, it.investorUUID)
-                ps.setString(3, it.stockName)
-                ps.setString(4, it.investorName)
-                ps.setInt(5, it.holdingNum)
-                ps.setDouble(6, it.holdingCost)
-                ps.setDouble(7, it.totalHoldingMarketCap)
-                ps.setDouble(8, it.currentDiff)
-                ps.setDouble(9, it.diffRate)
+                listOf(
+                    it.stockCode, it.investorUUID, it.stockName, it.investorName,
+                    it.holdingNum, it.holdingCost, it.totalHoldingMarketCap,
+                    it.currentDiff, it.diffRate
+                ).apply { ps.setAllPropsOnce<Asset>(this) }
                 ps.addBatch()
             }
         }
@@ -114,16 +116,4 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         "NULL)",
         "NULL, PRIMARY KEY(stockCode, investorUUID))"
     )
-
-    inline fun <reified T> createInsertAllDataSQL(): String {
-        return StringBuilder("INSERT INTO ")
-            .append(UniqueIDManager.createTableName<T>())
-            .append(" VALUES (")
-            .apply {
-                repeat(T::class.java.declaredFields.size) {
-                    append("?,")
-                }
-            }.append(")")
-            .toString().replace(",)", ")")
-    }
 }

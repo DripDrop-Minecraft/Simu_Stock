@@ -6,6 +6,7 @@ import com.zaxxer.hikari.util.IsolationLevel
 import games.dripdrop.simustock.bean.ColumnProp
 import games.dripdrop.simustock.interfaces.IDatabase
 import games.dripdrop.simustock.utils.PluginLogManager
+import games.dripdrop.simustock.utils.UniqueIDManager
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -118,5 +119,58 @@ abstract class AbstractDatabaseManager : IDatabase {
             .append(")")
             .toString()
             .replace(", )", ")")
+    }
+
+    inline fun <reified T> createUpdateWithConditionSQL(map: Map<String, Any>): StringBuilder {
+        return StringBuilder(StringBuilder("UPDATE ")
+            .append(UniqueIDManager.createTableName<T>())
+            .append(" SET ")
+            .apply {
+                map.keys.onEach { append("$it = ?, ") }
+            }.append("WHERE ").replace(Regex(", WHERE"), " WHERE")
+        )
+    }
+
+    inline fun <reified T> createInsertAllDataSQL(): String {
+        return StringBuilder("INSERT INTO ")
+            .append(UniqueIDManager.createTableName<T>())
+            .append(" VALUES (")
+            .apply {
+                repeat(T::class.java.declaredFields.size) {
+                    append("?,")
+                }
+            }.append(")")
+            .toString().replace(",)", ")")
+    }
+
+    inline fun <reified T> PreparedStatement.setAllPropsOnce(list: List<Any>) {
+        if (T::class.java.declaredFields.size != list.size) {
+            throw IllegalArgumentException("List and [${T::class.java.simpleName}]'s declared fields are not matched")
+        }
+        T::class.java.declaredFields.forEachIndexed { index, field ->
+            when (field.type.simpleName) {
+                String::class.java.simpleName -> {
+                    setString(index + 1, (list[index] as String))
+                }
+
+                Int::class.java.simpleName.lowercase() -> {
+                    setInt(index + 1, (list[index] as Int))
+                }
+
+                Double::class.java.simpleName.lowercase() -> {
+                    setDouble(index + 1, (list[index] as Double))
+                }
+
+                Long::class.java.simpleName.lowercase() -> {
+                    setLong(index + 1, (list[index] as Long))
+                }
+
+                Boolean::class.java.simpleName.lowercase() -> {
+                    setBoolean(index + 1, (list[index] as Boolean))
+                }
+
+                else -> throw IllegalArgumentException("Invalid value in list[$index]")
+            }
+        }
     }
 }
