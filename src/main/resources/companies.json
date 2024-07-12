@@ -1,0 +1,38 @@
+[
+  {
+    "stockCode": "This is stock code",
+    "name": "This is company name",
+    "desc": "This is a description of the company",
+    "currentStockNum": 0,
+    "currentPrice": 0.0,
+    "isListed": true,
+    "riskLevel": 0
+  },
+  {
+    "stockCode": "This is stock code",
+    "name": "This is company name",
+    "desc": "This is a description of the company",
+    "currentStockNum": 0,
+    "currentPrice": 0.0,
+    "isListed": true,
+    "riskLevel": 1
+  },
+  {
+    "stockCode": "This is stock code",
+    "name": "This is company name",
+    "desc": "This is a description of the company",
+    "currentStockNum": 0,
+    "currentPrice": 0.0,
+    "isListed": true,
+    "riskLevel": 2
+  },
+  {
+    "stockCode": "This is stock code",
+    "name": "This is company name",
+    "desc": "This is a description of the company",
+    "currentStockNum": 0,
+    "currentPrice": 0.0,
+    "isListed": false,
+    "riskLevel": 3
+  }
+]

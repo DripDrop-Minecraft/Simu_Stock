@@ -8,5 +8,5 @@
   ],
   "databaseAccount": "",
   "databasePassword": "",
-  "holiday": ""
+  "isMarketClosed": true
 }
