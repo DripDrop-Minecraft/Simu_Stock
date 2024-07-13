@@ -47,6 +47,7 @@ abstract class AbstractDatabaseManager : IDatabase {
         map: Map<Int, Any>,
         callback: (ResultSet) -> Unit
     ) {
+        PluginLogManager.i("sql of query: $sql")
         use {
             try {
                 prepareStatement(sql).apply {
@@ -60,6 +61,7 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     override fun Connection.update(sql: String, map: Map<Int, Any>, callback: (Int) -> Unit) {
+        PluginLogManager.i("sql of update: $sql")
         use {
             try {
                 prepareStatement(sql).apply {
@@ -73,11 +75,12 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     override fun Connection.batch(sql: String, callback: (PreparedStatement) -> Unit) {
+        PluginLogManager.i("sql of batch: $sql")
         use {
             try {
                 prepareStatement(sql).use {
                     callback(it)
-                    it.executeBatch()
+                    it.executeBatch().apply { PluginLogManager.i("size of batch results = $size") }
                 }
             } catch (e: Exception) {
                 PluginLogManager.e("failed to batch: ${e.localizedMessage}")
@@ -107,18 +110,24 @@ abstract class AbstractDatabaseManager : IDatabase {
 
     abstract fun createTables()
 
-    protected fun createTableCreatingSQL(tableName: String, vararg columnProps: ColumnProp): String {
-        return StringBuilder("CREATE TABLE IF NOT EXISTS ")
-            .append(tableName)
-            .append(" (")
+    inline fun <reified T> createDeleteWithConditionSQL(hasConditions: Boolean): StringBuilder {
+        return StringBuilder("DELETE FROM ")
+            .append(UniqueIDManager.createTableName<T>())
             .apply {
-                columnProps.forEach {
-                    append("${it.columnName} ${it.columnType}${(" ${it.columnConstraint}").ifEmpty { "" }}, ")
+                if (hasConditions) {
+                    append(" WHERE ")
                 }
             }
-            .append(")")
-            .toString()
-            .replace(", )", ")")
+    }
+
+    inline fun <reified T> createQueryWithConditionSQL(hasConditions: Boolean): StringBuilder {
+        return StringBuilder("SELECT * FROM ")
+            .append(UniqueIDManager.createTableName<T>())
+            .apply {
+                if (hasConditions) {
+                    append(" WHERE ")
+                }
+            }
     }
 
     inline fun <reified T> createUpdateWithConditionSQL(map: Map<String, Any>): StringBuilder {
@@ -172,5 +181,19 @@ abstract class AbstractDatabaseManager : IDatabase {
                 else -> throw IllegalArgumentException("Invalid value in list[$index]")
             }
         }
+    }
+
+    protected fun createTableCreatingSQL(tableName: String, vararg columnProps: ColumnProp): String {
+        return StringBuilder("CREATE TABLE IF NOT EXISTS ")
+            .append(tableName)
+            .append(" (")
+            .apply {
+                columnProps.forEach {
+                    append("${it.columnName} ${it.columnType}${(" ${it.columnConstraint}").ifEmpty { "" }}, ")
+                }
+            }
+            .append(")")
+            .toString()
+            .replace(", )", ")")
     }
 }

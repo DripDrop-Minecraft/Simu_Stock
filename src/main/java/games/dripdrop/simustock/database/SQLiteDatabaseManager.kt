@@ -2,11 +2,13 @@ package games.dripdrop.simustock.database
 
 import com.zaxxer.hikari.HikariConfig
 import games.dripdrop.simustock.bean.*
-import games.dripdrop.simustock.center.SystemService
 import games.dripdrop.simustock.utils.PluginLogManager
 import games.dripdrop.simustock.utils.UniqueIDManager
 
 class SQLiteDatabaseManager : AbstractDatabaseManager() {
+    private val mCompanies = mutableListOf<Company>()
+    private val mOrders = mutableListOf<Order>()
+    private val mAssets = mutableListOf<Asset>()
 
     override fun createTables() {
         getDataSource()?.connection?.use { it.update(createCompanyTable(), mapOf()) {} }
@@ -24,9 +26,9 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         }
     }
 
-    fun importCompaniesFromFile() {
+    fun insertCompanies(list: List<Company?>) {
         getDataSource()?.connection?.batch(createInsertAllDataSQL<Company>()) { ps ->
-            SystemService.getCompanies().onEach {
+            list.onEach {
                 if (it != null) {
                     listOf(
                         it.stockCode, it.name, it.desc, it.currentStockNum,
@@ -35,6 +37,56 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
                     ps.addBatch()
                 }
             }
+        }
+    }
+
+    fun deleteCompany(vararg stockCodes: String) {
+        val sql = createDeleteWithConditionSQL<Company>(stockCodes.isNotEmpty())
+            .apply {
+                if (stockCodes.isNotEmpty()) {
+                    append("stockCode = ?")
+                }
+            }
+            .toString()
+        getDataSource()?.connection?.apply {
+            if (stockCodes.isNotEmpty()) {
+                batch(sql) { ps ->
+                    stockCodes.onEach {
+                        ps.setString(1, it)
+                        ps.addBatch()
+                    }
+                }
+            } else {
+                update(sql, emptyMap()) { PluginLogManager.i("update result: $it") }
+            }
+        }
+    }
+
+    fun queryCompanyByStockCode(vararg stockCodes: String, callback: (List<Company>) -> Unit) {
+        val sql = createQueryWithConditionSQL<Company>(stockCodes.isNotEmpty())
+            .apply {
+                if (stockCodes.isNotEmpty()) {
+                    append("(")
+                    repeat(stockCodes.size) { append("stockCode = ? OR ") }
+                    append(")")
+                }
+            }.toString().replace(" OR )", ")")
+        val sqlMap = linkedMapOf<Int, String>().apply {
+            stockCodes.onEachIndexed { index, stockCode -> put(index + 1, stockCode) }
+        }
+        getDataSource()?.connection?.query(sql, sqlMap) {
+            mCompanies.clear()
+            while (it.next()) {
+                mCompanies.add(
+                    Company(
+                        it.getString(1), it.getString(2),
+                        it.getString(3), it.getInt(4),
+                        it.getDouble(5), it.getBoolean(6),
+                        it.getInt(7)
+                    )
+                )
+            }
+            callback(mCompanies)
         }
     }
 
@@ -57,10 +109,39 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
                 listOf(
                     it.orderNumber, it.timestamp, it.stockName, it.stockCode,
                     it.investorName, it.investorUUID, it.dealingAmount,
-                    it.dealingPrice, it.isBuying
+                    it.dealingPrice, it.isBuying, it.state
                 ).apply { ps.setAllPropsOnce<Order>(this) }
                 ps.addBatch()
             }
+        }
+    }
+
+    fun queryOrdersByOrderNumber(vararg orderNumbers: String, callback: (List<Order>) -> Unit) {
+        val sql = createQueryWithConditionSQL<Order>(orderNumbers.isNotEmpty())
+            .apply {
+                if (orderNumbers.isNotEmpty()) {
+                    append("(")
+                    repeat(orderNumbers.size) { append("orderNumber = ? OR ") }
+                    append(")")
+                }
+            }.toString().replace(" OR )", ")")
+        val sqlMap = linkedMapOf<Int, String>().apply {
+            orderNumbers.onEachIndexed { index, on -> put(index + 1, on) }
+        }
+        getDataSource()?.connection?.query(sql, sqlMap) {
+            mOrders.clear()
+            while (it.next()) {
+                mOrders.add(
+                    Order(
+                        it.getString(1), it.getLong(2),
+                        it.getString(3), it.getString(4),
+                        it.getString(5), it.getString(6),
+                        it.getInt(7), it.getDouble(8),
+                        it.getBoolean(9), it.getInt(10)
+                    )
+                )
+            }
+            callback(mOrders)
         }
     }
 
@@ -75,6 +156,53 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
                 ps.addBatch()
             }
         }
+    }
+
+    fun queryAssetsByInvestorUUIDAndStockCode(
+        investorUUID: String,
+        vararg stockCodes: String,
+        callback: (List<Asset>) -> Unit
+    ) {
+        val sql = createQueryWithConditionSQL<Asset>(stockCodes.isNotEmpty())
+            .apply {
+                if (stockCodes.isNotEmpty()) {
+                    append("(investorUUID = ? AND (")
+                    repeat(stockCodes.size) { append("stockCode = ? OR ") }
+                    append("))")
+                }
+            }.toString().replace(" OR )", ")")
+        val sqlMap = linkedMapOf(1 to investorUUID).apply {
+            stockCodes.onEachIndexed { index, stockCode -> put(index + 2, stockCode) }
+        }
+        getDataSource()?.connection?.query(sql, sqlMap) {
+            mAssets.clear()
+            while (it.next()) {
+                mAssets.add(
+                    Asset(
+                        it.getString(1), it.getString(2),
+                        it.getString(3), it.getString(4),
+                        it.getInt(5), it.getDouble(6),
+                        it.getDouble(7), it.getDouble(8),
+                        it.getDouble(9)
+                    )
+                )
+            }
+            callback(mAssets)
+        }
+    }
+
+    fun updateAssetInfoByInvestorUUIDAndStockCode(investorUUID: String, stockCode: String, map: Map<String, Any>) {
+        val sql = createUpdateWithConditionSQL<Asset>(map)
+            .append("investorUUID = ? AND stockCode = ?")
+            .toString()
+        val sqlMap = linkedMapOf<Int, Any>().apply {
+            map.onEachIndexed { index, entry ->
+                put(index + 1, entry.value)
+            }
+            put(map.size + 1, investorUUID)
+            put(map.size + 2, stockCode)
+        }
+        getDataSource()?.connection?.update(sql, sqlMap) { PluginLogManager.i("update result: $it") }
     }
 
     private fun createCompanyTable() = createTableCreatingSQL(
@@ -98,13 +226,14 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         ColumnProp("investorUUID", "TEXT", "NOT NULL"),
         ColumnProp("dealingAmount", "INTEGER", "CHECK(dealingAmount > 0)"),
         ColumnProp("dealingPrice", "DOUBLE", "CHECK(dealingPrice > 0.0)"),
-        ColumnProp("isBuying", "BOOLEAN", "NOT NULL")
+        ColumnProp("isBuying", "BOOLEAN", "NOT NULL"),
+        ColumnProp("state", "INTEGER", "NOT NULL")
     )
 
     private fun createAssetTable() = createTableCreatingSQL(
         UniqueIDManager.createTableName<Asset>(),
-        ColumnProp("stockCode", "TEXT", "NOT NULL UNIQUE"),
-        ColumnProp("investorUUID", "TEXT", "NOT NULL UNIQUE"),
+        ColumnProp("stockCode", "TEXT", "NOT NULL"),
+        ColumnProp("investorUUID", "TEXT", "NOT NULL"),
         ColumnProp("stockName", "TEXT", "NOT NULL"),
         ColumnProp("investorName", "TEXT", "NOT NULL"),
         ColumnProp("holdingNum", "INTEGER", "CHECK(holdingNum >= 0)"),
