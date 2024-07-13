@@ -18,5 +18,13 @@ data class Order(
     // 每股交易单价
     var dealingPrice: Double,
     // 买入或卖出
-    var isBuying: Boolean
+    var isBuying: Boolean,
+    // 订单状态
+    var state: Int = OrderState.WAITING_MATCH.state
 )
+
+enum class OrderState(val state: Int) {
+    ABANDONED(-1),
+    WAITING_MATCH(0),
+    COMPLETED(1)
+}
