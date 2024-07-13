@@ -7,7 +7,7 @@ object UniqueIDManager {
 
     fun createStockCode(): String {
         return StringBuilder(UUID.randomUUID().toString().substring(0, 4).uppercase())
-            .append(SimpleDateFormat("yyMMddmm", Locale.PRC).format(Date()))
+            .append(SimpleDateFormat("yyMMddHHmm", Locale.PRC).format(Date()))
             .append("DD")
             .toString()
     }
