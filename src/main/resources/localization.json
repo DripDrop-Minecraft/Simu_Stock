@@ -1,0 +1,8 @@
+{
+    "noPermission": "你没有权限执行此操作！",
+    "help": "你能使用的命令如下列所示：\n",
+    "reloadingConfig": "正在重新加载配置……",
+    "configReloaded": "配置已重新加载！",
+    "importingCompanies": "正在导入公司……",
+    "companiesImported": "公司已导入！"
+}
