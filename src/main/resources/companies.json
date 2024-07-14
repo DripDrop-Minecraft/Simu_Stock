@@ -6,7 +6,9 @@
     "currentStockNum": 0,
     "currentPrice": 0.0,
     "isListed": true,
-    "riskLevel": 0
+    "riskLevel": 0,
+    "availableFunds": 0.0,
+    "debt": 0.0
   },
   {
     "stockCode": "This is stock code",
@@ -15,7 +17,9 @@
     "currentStockNum": 0,
     "currentPrice": 0.0,
     "isListed": true,
-    "riskLevel": 1
+    "riskLevel": 1,
+    "availableFunds": 0.0,
+    "debt": 0.0
   },
   {
     "stockCode": "This is stock code",
@@ -24,7 +28,9 @@
     "currentStockNum": 0,
     "currentPrice": 0.0,
     "isListed": true,
-    "riskLevel": 2
+    "riskLevel": 2,
+    "availableFunds": 0.0,
+    "debt": 0.0
   },
   {
     "stockCode": "This is stock code",
@@ -33,6 +39,8 @@
     "currentStockNum": 0,
     "currentPrice": 0.0,
     "isListed": false,
-    "riskLevel": 3
+    "riskLevel": 3,
+    "availableFunds": 0.0,
+    "debt": 0.0
   }
 ]
