@@ -34,7 +34,7 @@ object SystemService {
             PluginLogManager.w("already init")
             return
         }
-        initPluginConfig(plugin.dataFolder)
+        initPluginConfig(plugin)
         initRuntimeEnvironment(plugin)
         initDatabase()
         runStockSystem()
@@ -44,6 +44,14 @@ object SystemService {
         mSQLiteDatabaseManager.deinitDatabase()
         mEconomy = null
         mPermission = null
+    }
+
+    @Throws(IllegalStateException::class)
+    fun getPlugin(): JavaPlugin {
+        if (!mIsInit) {
+            throw IllegalStateException("system service has not been initialized yet!")
+        }
+        return mPlugin
     }
 
     @Throws(IllegalStateException::class)
@@ -101,7 +109,6 @@ object SystemService {
     @Throws(RuntimeException::class)
     private fun initRuntimeEnvironment(plugin: JavaPlugin) {
         PluginLogManager.i("init runtime: check permission and plugin Vault...")
-        mPlugin = plugin
         if (plugin.server.pluginManager.getPlugin("Vault") == null) {
             throw RuntimeException("I cannot run without plugin Vault!")
         }
@@ -119,10 +126,11 @@ object SystemService {
         }
     }
 
-    private fun initPluginConfig(file: File) {
+    private fun initPluginConfig(plugin: JavaPlugin) {
         PluginLogManager.i("init plugin config now...")
-        JsonManager.checkFileOrDirectoryAvailable(file, PluginFile.LOCALIZATION_FILE)
-        JsonManager.checkFileOrDirectoryAvailable(file, PluginFile.CONFIG_FILE)
+        mPlugin = plugin
+        JsonManager.checkFileOrDirectoryAvailable(plugin.dataFolder, PluginFile.LOCALIZATION_FILE)
+        JsonManager.checkFileOrDirectoryAvailable(plugin.dataFolder, PluginFile.CONFIG_FILE)
     }
 
     private fun initDatabase() {
