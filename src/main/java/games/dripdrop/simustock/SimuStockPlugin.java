@@ -1,9 +1,11 @@
 package games.dripdrop.simustock;
 
 import games.dripdrop.simustock.presenter.SystemService;
+import games.dripdrop.simustock.presenter.interact.CommandExecutorImpl;
 import games.dripdrop.simustock.presenter.interact.CommandListener;
 import games.dripdrop.simustock.presenter.interact.CommandListenerKt;
 import games.dripdrop.simustock.presenter.interact.EventListener;
+import games.dripdrop.simustock.presenter.interfaces.ICommand;
 import games.dripdrop.simustock.presenter.utils.PluginLogManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
@@ -14,7 +16,8 @@ import java.util.Objects;
 public final class SimuStockPlugin extends JavaPlugin {
 
     private final Listener mEventListener = new EventListener();
-    private final CommandListener mCommandListener = new CommandListener();
+    private final ICommand mCommandExecutorImpl = new CommandExecutorImpl();
+    private final CommandListener mCommandListener = new CommandListener(mCommandExecutorImpl);
     private final PluginLogManager mLogger = PluginLogManager.INSTANCE;
     private final SystemService mService = SystemService.INSTANCE;
     private final PluginCommand mCommandName = Objects.requireNonNull(getCommand(CommandListenerKt.commandName));

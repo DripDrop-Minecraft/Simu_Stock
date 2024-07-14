@@ -3,7 +3,8 @@ package games.dripdrop.simustock.presenter.interact
 import games.dripdrop.simustock.presenter.interfaces.ICommand
 import org.bukkit.command.CommandSender
 
-internal class CommandExecutorImpl : ICommand {
+class CommandExecutorImpl : ICommand {
+
     override fun execute(sender: CommandSender, args: Array<out String>?) {
         TODO("Not yet implemented")
     }
@@ -12,23 +13,23 @@ internal class CommandExecutorImpl : ICommand {
         TODO("Not yet implemented")
     }
 
-    override fun help() {
+    override fun CommandSender.help() {
         TODO("Not yet implemented")
     }
 
-    override fun reloadConfig() {
+    override fun CommandSender.reloadConfig() {
         TODO("Not yet implemented")
     }
 
-    override fun sendMessageToPlayer(content: String) {
+    override fun CommandSender.sendMessageToPlayer(content: String) {
         TODO("Not yet implemented")
     }
 
-    override fun importCompanies() {
+    override fun CommandSender.importCompanies() {
         TODO("Not yet implemented")
     }
 
-    override fun queryCompaniesByStockCode(vararg stockCodes: String) {
+    override fun CommandSender.queryCompaniesByStockCode(vararg stockCodes: String) {
         TODO("Not yet implemented")
     }
 

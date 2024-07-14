@@ -10,17 +10,17 @@ interface ICommand {
     fun getTabCommandList(sender: CommandSender, args: Array<out String>?): MutableList<String>
 
     // 指令帮助
-    fun help()
+    fun CommandSender.help()
 
     // 重载配置
-    fun reloadConfig()
+    fun CommandSender.reloadConfig()
 
     // 发送消息给玩家
-    fun sendMessageToPlayer(content: String)
+    fun CommandSender.sendMessageToPlayer(content: String)
 
     // 导入公司列表
-    fun importCompanies()
+    fun CommandSender.importCompanies()
 
     // 获取公司信息
-    fun queryCompaniesByStockCode(vararg stockCodes: String)
+    fun CommandSender.queryCompaniesByStockCode(vararg stockCodes: String)
 }
