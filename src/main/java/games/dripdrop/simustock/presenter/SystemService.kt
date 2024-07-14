@@ -22,8 +22,8 @@ import java.io.File
 
 object SystemService {
     private val mSQLiteDatabaseManager = SQLiteDatabaseManager()
-    private lateinit var mExchange: IExchange
     private lateinit var mPlugin: JavaPlugin
+    private lateinit var mExchange: IExchange
     private lateinit var mSecuritiesDealer: ISecuritiesDealer
     private var mEconomy: Economy? = null
     private var mPermission: Permission? = null
@@ -115,7 +115,7 @@ object SystemService {
         } else {
             PluginLogManager.i("init IExchange and ISecuritiesDealer objects...")
             mExchange = SystemExchange(mSQLiteDatabaseManager)
-            mSecuritiesDealer = SystemSecuritiesDealer(mSQLiteDatabaseManager, mEconomy!!)
+            mSecuritiesDealer = SystemSecuritiesDealer(mEconomy!!)
         }
     }
 

@@ -5,6 +5,10 @@ data class SystemConfig(
     var commissionRate: Double = 0.0015,
     // 印花税率
     var stampDutyRate: Double = 0.001,
+    // 最低交易费用
+    var minimumTransactionFee: Double = 5.0,
+    // 最高交易费率
+    var maximumTransactionFeeRate: Double = 0.005,
     // 服务器交易所名称
     var exchangeName: String = "DripDrop证券交易所",
     // 服务器券商名称
