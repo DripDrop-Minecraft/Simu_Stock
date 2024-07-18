@@ -12,6 +12,9 @@ interface ICommand {
     // 指令帮助
     fun CommandSender.help()
 
+    // 打开图形界面
+    fun CommandSender.openGui()
+
     // 重载配置
     fun CommandSender.reloadConfig()
 

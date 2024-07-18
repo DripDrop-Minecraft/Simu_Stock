@@ -1,10 +1,10 @@
 package games.dripdrop.simustock;
 
 import games.dripdrop.simustock.presenter.SystemService;
-import games.dripdrop.simustock.presenter.interact.CommandExecutorImpl;
-import games.dripdrop.simustock.presenter.interact.CommandListener;
-import games.dripdrop.simustock.presenter.interact.CommandListenerKt;
-import games.dripdrop.simustock.presenter.interact.EventListener;
+import games.dripdrop.simustock.presenter.interact.command.CommandExecutorImpl;
+import games.dripdrop.simustock.presenter.interact.command.CommandListener;
+import games.dripdrop.simustock.presenter.interact.command.CommandListenerKt;
+import games.dripdrop.simustock.presenter.interact.command.EventListener;
 import games.dripdrop.simustock.presenter.interfaces.ICommand;
 import games.dripdrop.simustock.presenter.utils.PluginLogManager;
 import org.bukkit.command.PluginCommand;
