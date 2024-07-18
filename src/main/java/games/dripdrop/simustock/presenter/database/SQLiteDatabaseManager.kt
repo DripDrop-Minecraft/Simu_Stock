@@ -35,8 +35,8 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
             list.onEach {
                 if (it != null) {
                     listOf(
-                        it.stockCode, it.name, it.desc, it.currentStockNum, it.currentPrice,
-                        it.isListed, it.riskLevel, it.availableFunds, it.debt
+                        it.stockCode, it.name, it.desc, it.currentStockNum, it.currentPrice, it.isListed,
+                        it.riskLevel, it.availableFunds, it.debt, it.listedTime, it.delistedTime
                     ).apply { ps.setAllPropsOnce<Company>(this) }
                     ps.addBatch()
                 }
@@ -85,7 +85,8 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
                     Company(
                         it.getString(1), it.getString(2), it.getString(3),
                         it.getInt(4), it.getDouble(5), it.getBoolean(6),
-                        it.getInt(7), it.getDouble(8), it.getDouble(9)
+                        it.getInt(7), it.getDouble(8), it.getDouble(9),
+                        it.getLong(10), it.getLong(11)
                     )
                 )
             }
@@ -219,6 +220,8 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         ColumnProp("riskLevel", "INTEGER", "NOT NULL"),
         ColumnProp("availableFunds", "DOUBLE", "CHECK(availableFunds >= 0.0)"),
         ColumnProp("debt", "DOUBLE", "CHECK(debt >= 0.0)"),
+        ColumnProp("listedTime", "LONG", "NOT NULL"),
+        ColumnProp("delistedTime", "LONG", "NOT NULL"),
     )
 
     private fun createOrderTable() = createTableCreatingSQL(

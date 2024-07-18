@@ -20,5 +20,9 @@ data class Company(
     // 当前公司可用资金
     var availableFunds: Double,
     // 当前公司负债
-    var debt: Double
+    var debt: Double,
+    // 上市时间
+    var listedTime: Long,
+    // 退市时间
+    var delistedTime: Long = -1L
 )

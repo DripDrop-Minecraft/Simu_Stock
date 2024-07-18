@@ -8,7 +8,9 @@
     "isListed": true,
     "riskLevel": 0,
     "availableFunds": 0.0,
-    "debt": 0.0
+    "debt": 0.0,
+    "listedTime": 1721314653000,
+    "delistedTime": -1
   },
   {
     "stockCode": "This is stock code",
@@ -19,7 +21,9 @@
     "isListed": true,
     "riskLevel": 1,
     "availableFunds": 0.0,
-    "debt": 0.0
+    "debt": 0.0,
+    "listedTime": 1721314653000,
+    "delistedTime": -1
   },
   {
     "stockCode": "This is stock code",
@@ -30,7 +34,9 @@
     "isListed": true,
     "riskLevel": 2,
     "availableFunds": 0.0,
-    "debt": 0.0
+    "debt": 0.0,
+    "listedTime": 1721314653000,
+    "delistedTime": -1
   },
   {
     "stockCode": "This is stock code",
@@ -41,6 +47,8 @@
     "isListed": false,
     "riskLevel": 3,
     "availableFunds": 0.0,
-    "debt": 0.0
+    "debt": 0.0,
+    "listedTime": 1721314653000,
+    "delistedTime": -1
   }
 ]
