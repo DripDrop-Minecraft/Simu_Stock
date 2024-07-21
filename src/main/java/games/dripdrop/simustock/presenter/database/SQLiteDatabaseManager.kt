@@ -5,9 +5,10 @@ import games.dripdrop.simustock.model.bean.Asset
 import games.dripdrop.simustock.model.bean.ColumnProp
 import games.dripdrop.simustock.model.bean.Company
 import games.dripdrop.simustock.model.bean.Order
-import games.dripdrop.simustock.model.constants.PluginFile
+import games.dripdrop.simustock.presenter.SystemService
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
 import games.dripdrop.simustock.presenter.utils.UniqueIDManager
+import java.io.File
 
 class SQLiteDatabaseManager : AbstractDatabaseManager() {
     private val mCompanies = mutableListOf<Company>()
@@ -20,9 +21,10 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
         getDataSource()?.connection?.use { it.update(createAssetTable(), mapOf()) {} }
     }
 
-    fun createConnectionConfig(name: String, pwd: String): HikariConfig {
+    fun createConnectionConfig(path: String, name: String, pwd: String): HikariConfig {
+        checkDatabaseFile(path)
         return HikariConfig().apply {
-            jdbcUrl = "jdbc:sqlite:${PluginFile.DATABASE_FILE.fileName}"
+            jdbcUrl = "jdbc:sqlite:$path"
             username = name
             password = pwd
             connectionTimeout = 10 * 1000L
@@ -207,6 +209,19 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
             put(map.size + 2, stockCode)
         }
         getDataSource()?.connection?.update(sql, sqlMap) { PluginLogManager.i("update result: $it") }
+    }
+
+    private fun checkDatabaseFile(path: String) {
+        val dir = File(SystemService.getRootPath())
+        val file = File(path)
+        val isPathAvailable = file.exists()
+        if (!dir.exists()) {
+            dir.mkdir()
+        }
+        if (!isPathAvailable) {
+            file.createNewFile()
+        }
+        PluginLogManager.i("is file available: $isPathAvailable")
     }
 
     private fun createCompanyTable() = createTableCreatingSQL(

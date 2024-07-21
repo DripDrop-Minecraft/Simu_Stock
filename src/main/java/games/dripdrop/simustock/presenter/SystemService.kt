@@ -11,8 +11,7 @@ import games.dripdrop.simustock.presenter.interfaces.IExchange
 import games.dripdrop.simustock.presenter.interfaces.ISecuritiesDealer
 import games.dripdrop.simustock.presenter.utils.JsonManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.Color
@@ -28,14 +27,16 @@ object SystemService {
     private var mEconomy: Economy? = null
     private var mPermission: Permission? = null
     private var mIsInit: Boolean = false
+    private var mRootPath = ""
 
     fun runSimulatedStockMarket(plugin: JavaPlugin) {
         if (mIsInit) {
             PluginLogManager.w("already init")
             return
         }
-        initPluginConfig(plugin)
-        initRuntimeEnvironment(plugin)
+        initDataPath(plugin)
+        initPluginConfig()
+        initRuntimeEnvironment()
         initDatabase()
         runStockSystem()
     }
@@ -45,6 +46,8 @@ object SystemService {
         mEconomy = null
         mPermission = null
     }
+
+    fun getRootPath(): String = mRootPath
 
     @Throws(IllegalStateException::class)
     fun getPlugin(): JavaPlugin {
@@ -80,21 +83,24 @@ object SystemService {
 
     fun getConfig(): SystemConfig {
         return JsonManager.getSingleObject(
-            "${mPlugin.dataFolder.path}${File.separatorChar}${PluginFile.CONFIG_FILE.fileName}",
+            "${getRootPath()}${PluginFile.CONFIG_FILE.fileName}",
+            PluginFile.CONFIG_FILE,
             SystemConfig()
         )
     }
 
     fun getLocalization(): Localization {
         return JsonManager.getSingleObject(
-            "${mPlugin.dataFolder.path}${File.separatorChar}${PluginFile.LOCALIZATION_FILE.fileName}",
+            "${getRootPath()}${PluginFile.LOCALIZATION_FILE.fileName}",
+            PluginFile.LOCALIZATION_FILE,
             Localization()
         )
     }
 
     fun getCompanies(): List<Company?> {
         return JsonManager.getObjectList(
-            "${mPlugin.dataFolder.path}${File.separatorChar}${PluginFile.COMPANY_LIST_FILE.fileName}"
+            "${getRootPath()}${PluginFile.COMPANY_LIST_FILE.fileName}",
+            PluginFile.COMPANY_LIST_FILE
         )
     }
 
@@ -106,17 +112,29 @@ object SystemService {
         }
     }
 
+    private fun initDataPath(javaPlugin: JavaPlugin) {
+        PluginLogManager.i("init data path")
+        mPlugin = javaPlugin
+        mRootPath = "${javaPlugin.dataFolder}${File.separatorChar}"
+        File(mRootPath).apply {
+            if (!isDirectory && !exists()) {
+                mkdir()
+            }
+            PluginLogManager.i("is data path available: ${exists()}")
+        }
+    }
+
     @Throws(RuntimeException::class)
-    private fun initRuntimeEnvironment(plugin: JavaPlugin) {
+    private fun initRuntimeEnvironment() {
         PluginLogManager.i("init runtime: check permission and plugin Vault...")
-        if (plugin.server.pluginManager.getPlugin("Vault") == null) {
+        if (mPlugin.server.pluginManager.getPlugin("Vault") == null) {
             throw RuntimeException("I cannot run without plugin Vault!")
         }
-        mPermission = plugin.server.servicesManager.getRegistration(Permission::class.java)?.provider
+        mPermission = mPlugin.server.servicesManager.getRegistration(Permission::class.java)?.provider
         if (mPermission == null) {
             PluginLogManager.w("No permission plugin supporting Vault found, use original apis")
         }
-        mEconomy = plugin.server.servicesManager.getRegistration(Economy::class.java)?.provider
+        mEconomy = mPlugin.server.servicesManager.getRegistration(Economy::class.java)?.provider
         if (mEconomy == null) {
             throw RuntimeException("I cannot run without provided economy service!")
         } else {
@@ -124,26 +142,31 @@ object SystemService {
             mExchange = SystemExchange(mSQLiteDatabaseManager)
             mSecuritiesDealer = SystemSecuritiesDealer(mEconomy!!)
         }
+        mIsInit = true
     }
 
-    private fun initPluginConfig(plugin: JavaPlugin) {
+    private fun initPluginConfig() {
         PluginLogManager.i("init plugin config now...")
-        mPlugin = plugin
-        JsonManager.checkFileOrDirectoryAvailable(plugin.dataFolder, PluginFile.LOCALIZATION_FILE)
-        JsonManager.checkFileOrDirectoryAvailable(plugin.dataFolder, PluginFile.CONFIG_FILE)
+        JsonManager.checkFileOrDirectoryAvailable(mPlugin.dataFolder, PluginFile.LOCALIZATION_FILE)
+        JsonManager.checkFileOrDirectoryAvailable(mPlugin.dataFolder, PluginFile.CONFIG_FILE)
     }
 
     private fun initDatabase() {
         PluginLogManager.i("init database now...")
         mSQLiteDatabaseManager.apply {
-            initDatabase(createConnectionConfig(getConfig().databaseAccount, getConfig().databasePassword))
+            initDatabase(
+                createConnectionConfig(
+                    "${getRootPath()}${PluginFile.DATABASE_FILE.fileName}",
+                    getConfig().databaseAccount, getConfig().databasePassword
+                )
+            )
         }
-        mIsInit = true
     }
 
     private fun runStockSystem() {
-        runBlocking {
+        GlobalScope.launch(Dispatchers.IO) {
             while (true) {
+                PluginLogManager.i("recycle")
                 // TODO
                 delay(15 * 1000L)
             }

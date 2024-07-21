@@ -1,9 +1,10 @@
 package games.dripdrop.simustock.presenter.utils
 
+import games.dripdrop.simustock.SimuStockPlugin
 import org.slf4j.LoggerFactory
 
 object PluginLogManager {
-    private val mLogger = LoggerFactory.getLogger(javaClass.simpleName)
+    private val mLogger = LoggerFactory.getLogger(SimuStockPlugin::class.java.simpleName)
 
     fun i(msg: String) = mLogger.info(msg)
 

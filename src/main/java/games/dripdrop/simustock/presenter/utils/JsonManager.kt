@@ -20,8 +20,11 @@ object JsonManager {
         .create()
 
 
-    inline fun <reified T> getObjectList(path: String): List<T?> {
+    inline fun <reified T> getObjectList(path: String, flag: PluginFile): List<T?> {
         PluginLogManager.i("type = ${T::class.java.simpleName}, file path = [$path]")
+        if (!checkFileOrDirectoryAvailable(File(path.replace(flag.fileName, "")), flag)) {
+            return emptyList()
+        }
         val jsonString = readJsonFromFile(path)
         return if (jsonString.isNotEmpty()) {
             mGson.fromJson(jsonString, (object : TypeToken<List<T>>() {}.type))
@@ -30,8 +33,11 @@ object JsonManager {
         }
     }
 
-    inline fun <reified T> getSingleObject(path: String, defaultValue: T): T {
+    inline fun <reified T> getSingleObject(path: String, flag: PluginFile, defaultValue: T): T {
         PluginLogManager.i("type = ${T::class.java.simpleName}, file path = [$path]")
+        if (!checkFileOrDirectoryAvailable(File(path.replace(flag.fileName, "")), flag)) {
+            return defaultValue
+        }
         val jsonString = readJsonFromFile(path)
         return if (jsonString.isNotEmpty()) {
             mGson.fromJson(jsonString, T::class.java)
