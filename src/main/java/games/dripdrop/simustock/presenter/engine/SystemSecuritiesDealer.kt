@@ -9,7 +9,7 @@ import games.dripdrop.simustock.presenter.interfaces.ISecuritiesDealer
 import games.dripdrop.simustock.presenter.utils.UniqueIDManager
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
-import org.bukkit.Color
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritiesDealer {
@@ -46,7 +46,7 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
         return (economy.getBalance(player).compareTo(transaction) >= 0).apply {
             if (!this) {
                 player.sendMessage(
-                    "${Color.GREEN}[SimuStock] ${Color.RED}${getLocalization().insufficientFunds}"
+                    "${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().insufficientFunds}"
                 )
             }
         }
@@ -76,7 +76,7 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
         isBuying: Boolean
     ): Order {
         if (dealingAmount <= 0 || (0.0).compareTo(dealingPrice) >= 0) {
-            player.sendMessage("${Color.GREEN}[SimuStock] ${Color.RED}${getLocalization().invalidOrder}")
+            player.sendMessage("${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().invalidOrder}")
             throw IllegalArgumentException("Invalid dealingAmount[$dealingAmount] or dealingPrice[$dealingPrice]")
         }
         return Order(
@@ -94,7 +94,7 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
         return transactionSuccess().apply {
             if (this) {
                 player.sendMessage(
-                    "${Color.GREEN}[SimuStock] ${Color.RED}${getLocalization().failedTransaction}${errorMessage}"
+                    "${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().failedTransaction}${errorMessage}"
                 )
             }
         }
