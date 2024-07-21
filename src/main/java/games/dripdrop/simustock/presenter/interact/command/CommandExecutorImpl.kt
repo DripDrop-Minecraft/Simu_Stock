@@ -18,6 +18,8 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CommandExecutorImpl : ICommand {
     private val mCommandListForOp = listOf(
@@ -51,7 +53,7 @@ class CommandExecutorImpl : ICommand {
     override fun CommandSender.help() {
         if (this is Player) {
             sendMessage(
-                StringBuilder("${ChatColor.GREEN}[${getConfig().exchangeName}]\n")
+                StringBuilder("${ChatColor.GREEN}[${getLocalization().exchangeName}]\n")
                     .append("${ChatColor.YELLOW}${getLocalization().help}\n")
                     .apply {
                         (if (isHighPriority()) mCommandListForOp else mCommandListForNormalPlayers).onEach {
@@ -64,10 +66,11 @@ class CommandExecutorImpl : ICommand {
 
     override fun CommandSender.openGui() {
         if (this is Player) {
-            GuiManager.getSpecifiedPage(InventoryPage.HOMEPAGE)?.let {
-                it.createInventory(9, getConfig().exchangeName).apply {
-                    ((it as Homepage).getItemMap()).onEach { item ->
-                        it.addAnItem(this, item.key, it.createItem(item.value))
+            GuiManager.getCurrentPage(InventoryPage.HOMEPAGE)?.let {
+                it.createInventory(9, getLocalization().exchangeName).apply {
+                    (it as Homepage).getItemMap().onEach { (position, item) ->
+                        PluginLogManager.i("position: $position, item: ${item.type.name}")
+                        it.addAnItem(this, position, item)
                     }
                     openInventory(this)
                 }
@@ -84,13 +87,10 @@ class CommandExecutorImpl : ICommand {
     }
 
     override fun CommandSender.publishAnnouncement(content: String) {
-        PluginLogManager.i("announcement [$content] published")
+        PluginLogManager.i("announcement [$content] published by [$name]")
         // TODO: 插入公告信息
-        Bukkit.broadcast(
-            Component.text(
-                "${ChatColor.GREEN}[${getLocalization().announcementFromExchange}] $content"
-            )
-        )
+        val tag = "${getDateTime()} ${getLocalization().announcementFromExchange}"
+        Bukkit.broadcast(Component.text("${ChatColor.GREEN}[$tag] ${ChatColor.YELLOW}$content"))
     }
 
     private fun CommandSender.isHighPriority(): Boolean {
@@ -105,5 +105,9 @@ class CommandExecutorImpl : ICommand {
             ANNOUNCE.command -> getLocalization().descForAnnounce
             else -> "NULL"
         }
+    }
+
+    private fun getDateTime(): String {
+        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.PRC).format(Date())
     }
 }

@@ -168,7 +168,7 @@ object SystemService {
             while (true) {
                 PluginLogManager.i("recycle")
                 // TODO
-                delay(15 * 1000L)
+                delay(90 * 1000L)
             }
         }
     }
