@@ -7,5 +7,14 @@ load: STARTUP
 dependencies:
   - name: Vault
     required: true
+  - name: XConomy
+    required: true
 authors: [Dell_G3]
 description: A simulated stock market for DripDrop
+
+commands:
+  stock:
+    description: ""
+    usage: "/stock <arg>"
+    aliases: [ stk, stock ]
+

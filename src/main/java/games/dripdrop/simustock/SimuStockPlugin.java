@@ -11,8 +11,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
-
 public final class SimuStockPlugin extends JavaPlugin {
 
     private final Listener mEventListener = new EventListener();
@@ -20,8 +18,6 @@ public final class SimuStockPlugin extends JavaPlugin {
     private final CommandListener mCommandListener = new CommandListener(mCommandExecutorImpl);
     private final PluginLogManager mLogger = PluginLogManager.INSTANCE;
     private final SystemService mService = SystemService.INSTANCE;
-    private final PluginCommand mCommandName = Objects.requireNonNull(getCommand(CommandListenerKt.commandName));
-    private final PluginCommand mCommandAlias = Objects.requireNonNull(getCommand(CommandListenerKt.commandAlias));
 
     @Override
     public void onEnable() {
@@ -40,9 +36,17 @@ public final class SimuStockPlugin extends JavaPlugin {
         mLogger.i("register event listener...");
         getServer().getPluginManager().registerEvents(mEventListener, this);
         mLogger.i("register command listener...");
-        mCommandName.setExecutor(mCommandListener);
-        mCommandName.setTabCompleter(mCommandListener);
-        mCommandAlias.setExecutor(mCommandListener);
-        mCommandAlias.setTabCompleter(mCommandListener);
+        PluginCommand mCommandName = getCommand(CommandListenerKt.commandName);
+        mLogger.i("command name is not null: " + (mCommandName != null));
+        if (mCommandName != null) {
+            mCommandName.setExecutor(mCommandListener);
+            mCommandName.setTabCompleter(mCommandListener);
+        }
+        PluginCommand mCommandAlias = getCommand(CommandListenerKt.commandAlias);
+        mLogger.i("command alias is not null: " + (mCommandAlias != null));
+        if (mCommandAlias != null) {
+            mCommandAlias.setExecutor(mCommandListener);
+            mCommandAlias.setTabCompleter(mCommandListener);
+        }
     }
 }
