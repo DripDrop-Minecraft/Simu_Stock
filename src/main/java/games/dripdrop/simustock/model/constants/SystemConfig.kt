@@ -9,10 +9,6 @@ data class SystemConfig(
     var minimumTransactionFee: Double = 5.0,
     // 最高交易费率
     var maximumTransactionFeeRate: Double = 0.005,
-    // 服务器交易所名称
-    var exchangeName: String = "DripDrop证券交易所",
-    // 服务器券商名称
-    var securitiesDealerName: String = "DripDrop信投",
     // 有权限玩家
     var administrators: List<String> = arrayListOf("CONSOLE"),
     // 数据库账号
