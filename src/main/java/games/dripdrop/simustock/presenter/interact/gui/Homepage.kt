@@ -3,6 +3,7 @@ package games.dripdrop.simustock.presenter.interact.gui
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
 import games.dripdrop.simustock.presenter.interfaces.AbstractGuiManager
 import net.kyori.adventure.text.Component
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -25,7 +26,6 @@ class Homepage : AbstractGuiManager() {
     private fun dispatchAction(material: Material, event: InventoryClickEvent) {
         val player = event.whoClicked as Player
         when (material) {
-            Material.COMPASS -> player.openBook(createGuidance())
             Material.DIAMOND -> {
                 player.sendMessage(Component.text("查看股票列表"))
             }
@@ -42,10 +42,6 @@ class Homepage : AbstractGuiManager() {
         }
     }
 
-    private fun createGuidance(): ItemStack {
-        return ItemStack(Material.WRITTEN_BOOK, 1)
-    }
-
     private fun createIcon(material: Material, title: String): ItemStack {
         return ItemStack(material, 1).apply {
             itemMeta = itemMeta.apply {
@@ -54,7 +50,23 @@ class Homepage : AbstractGuiManager() {
         }
     }
 
-    private fun createGuideButton(): ItemStack = createIcon(Material.BOOK, getLocalization().titleOfGuidance)
+    private fun createGuideButton(): ItemStack {
+        return createIcon(Material.BOOK, getLocalization().titleOfGuidance).apply {
+            itemMeta = itemMeta.apply { lore(formatContentOfGuidance()) }
+        }
+    }
+
+    private fun formatContentOfGuidance(): List<Component> {
+        val guidance = getLocalization().contentOfGuidance
+        val list = arrayListOf<Component>()
+        guidance.split(Regex("\\n")).apply {
+            onEachIndexed { index, s ->
+                val color = if (0 == index || lastIndex == index) ChatColor.RED else ChatColor.GREEN
+                list.add(Component.text("$color$s"))
+            }
+        }
+        return list
+    }
 
     private fun createCompanyListButton(): ItemStack =
         createIcon(Material.DIAMOND, getLocalization().titleOfCompanyList)
