@@ -6,5 +6,11 @@
     "importingCompanies": "正在导入公司……",
     "companiesImported": "公司已导入！",
     "failedTransaction": "交易失败！原因：",
-    "invalidOrder": "无效订单！"
+    "invalidOrder": "无效订单！",
+    "descForHelp": "查询你能使用的命令",
+    "descForGui": "打开操作界面",
+    "descForReload": "重载插件配置",
+    "descForImportCompanies": "导入公司列表",
+    "descForAnnounce": "发布公告",
+    "announcementFromExchange": "来自交易所的公告"
 }

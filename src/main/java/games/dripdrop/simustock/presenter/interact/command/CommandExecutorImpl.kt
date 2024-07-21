@@ -1,25 +1,65 @@
 package games.dripdrop.simustock.presenter.interact.command
 
+import games.dripdrop.simustock.model.bean.Company
 import games.dripdrop.simustock.model.constants.InventoryPage
+import games.dripdrop.simustock.model.constants.PluginCommands.*
+import games.dripdrop.simustock.model.constants.PluginFile
+import games.dripdrop.simustock.presenter.SystemService
 import games.dripdrop.simustock.presenter.SystemService.getConfig
+import games.dripdrop.simustock.presenter.SystemService.getLocalization
+import games.dripdrop.simustock.presenter.SystemService.getRootPath
 import games.dripdrop.simustock.presenter.interact.gui.GuiManager
 import games.dripdrop.simustock.presenter.interact.gui.Homepage
 import games.dripdrop.simustock.presenter.interfaces.ICommand
+import games.dripdrop.simustock.presenter.utils.JsonManager
+import games.dripdrop.simustock.presenter.utils.PluginLogManager
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CommandExecutorImpl : ICommand {
+    private val mCommandListForOp = listOf(
+        HELP.command,
+        GUI.command,
+        IMPORT_COMPANIES.command,
+        ANNOUNCE.command
+    )
+    private val mCommandListForNormalPlayers = listOf(
+        HELP.command,
+        GUI.command
+    )
 
     override fun execute(sender: CommandSender, args: Array<out String>?) {
-        TODO("Not yet implemented")
+        when {
+            HELP.command == args?.first() -> sender.help()
+            GUI.command == args?.first() -> sender.openGui()
+            IMPORT_COMPANIES.command == args?.first() -> sender.importCompanies()
+            ANNOUNCE.command == args?.first() -> sender.publishAnnouncement(args.getOrNull(1) ?: "NULL")
+        }
     }
 
     override fun getTabCommandList(sender: CommandSender, args: Array<out String>?): MutableList<String> {
-        TODO("Not yet implemented")
+        return if (sender.isHighPriority()) {
+            mCommandListForOp.toMutableList()
+        } else {
+            mCommandListForNormalPlayers.toMutableList()
+        }
     }
 
     override fun CommandSender.help() {
-        TODO("Not yet implemented")
+        if (this is Player) {
+            sendMessage(
+                StringBuilder("${ChatColor.GREEN}[${getConfig().exchangeName}]\n")
+                    .append("${ChatColor.YELLOW}${getLocalization().help}\n")
+                    .apply {
+                        (if (isHighPriority()) mCommandListForOp else mCommandListForNormalPlayers).onEach {
+                            append("${ChatColor.YELLOW}/${commandName} $it - ${handleHint(it)}\n")
+                        }
+                    }.toString()
+            )
+        }
     }
 
     override fun CommandSender.openGui() {
@@ -35,20 +75,35 @@ class CommandExecutorImpl : ICommand {
         }
     }
 
-    override fun CommandSender.reloadConfig() {
-        TODO("Not yet implemented")
-    }
-
-    override fun CommandSender.sendMessageToPlayer(content: String) {
-        TODO("Not yet implemented")
-    }
-
     override fun CommandSender.importCompanies() {
-        TODO("Not yet implemented")
+        sendMessage(getLocalization().importingCompanies)
+        SystemService.getSQLiteManager().insertCompanies(
+            JsonManager.getObjectList<Company>(getRootPath(), PluginFile.COMPANY_LIST_FILE)
+        )
+        sendMessage(getLocalization().companiesImported)
     }
 
-    override fun CommandSender.queryCompaniesByStockCode(vararg stockCodes: String) {
-        TODO("Not yet implemented")
+    override fun CommandSender.publishAnnouncement(content: String) {
+        PluginLogManager.i("announcement [$content] published")
+        // TODO: 插入公告信息
+        Bukkit.broadcast(
+            Component.text(
+                "${ChatColor.GREEN}[${getLocalization().announcementFromExchange}] $content"
+            )
+        )
     }
 
+    private fun CommandSender.isHighPriority(): Boolean {
+        return isOp || getConfig().administrators.contains(name)
+    }
+
+    private fun handleHint(command: String): String {
+        return when (command) {
+            HELP.command -> getLocalization().descForHelp
+            GUI.command -> getLocalization().descForGui
+            IMPORT_COMPANIES.command -> getLocalization().descForImportCompanies
+            ANNOUNCE.command -> getLocalization().descForAnnounce
+            else -> "NULL"
+        }
+    }
 }

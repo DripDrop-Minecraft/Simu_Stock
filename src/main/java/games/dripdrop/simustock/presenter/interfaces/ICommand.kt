@@ -15,15 +15,9 @@ interface ICommand {
     // 打开图形界面
     fun CommandSender.openGui()
 
-    // 重载配置
-    fun CommandSender.reloadConfig()
-
-    // 发送消息给玩家
-    fun CommandSender.sendMessageToPlayer(content: String)
-
     // 导入公司列表
     fun CommandSender.importCompanies()
 
-    // 获取公司信息
-    fun CommandSender.queryCompaniesByStockCode(vararg stockCodes: String)
+    // 发布公告
+    fun CommandSender.publishAnnouncement(content: String)
 }
