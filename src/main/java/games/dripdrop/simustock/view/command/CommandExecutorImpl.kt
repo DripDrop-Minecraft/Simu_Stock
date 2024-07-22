@@ -14,7 +14,6 @@ import games.dripdrop.simustock.presenter.utils.JsonManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
 import games.dripdrop.simustock.presenter.utils.TextFormatManager
 import games.dripdrop.simustock.view.gui.GuiManager
-import games.dripdrop.simustock.view.gui.Homepage
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -66,15 +65,7 @@ class CommandExecutorImpl : ICommand {
 
     override fun CommandSender.openGui() {
         if (this is Player) {
-            GuiManager.getCurrentPage(InventoryPage.HOMEPAGE)?.let {
-                it.createInventory(9, getLocalization().exchangeName).apply {
-                    (it as Homepage).getItemMap().onEach { (position, item) ->
-                        PluginLogManager.i("position: $position, item: ${item.type.name}")
-                        it.addAnItem(this, position, item)
-                    }
-                    openInventory(this)
-                }
-            }
+            GuiManager.getCurrentPage(InventoryPage.HOMEPAGE)?.initView(this)
         }
     }
 

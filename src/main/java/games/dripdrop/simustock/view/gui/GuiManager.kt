@@ -16,7 +16,7 @@ object GuiManager {
     )
 
     fun onClicked(event: InventoryClickEvent) {
-        PluginLogManager.i("inventory click event passed, position = [${event.rawSlot}]")
+        PluginLogManager.i("position = [${event.rawSlot}], title = [${event.view.originalTitle}]")
         when (event.view.originalTitle) {
             getLocalization().exchangeName -> {
                 getCurrentPage(InventoryPage.HOMEPAGE)?.onItemClicked(event)
@@ -30,7 +30,7 @@ object GuiManager {
                 getCurrentPage(InventoryPage.COMPANY_DETAIL)?.onItemClicked(event)
             }
 
-            getLocalization().titleOfExchangeAnnouncement -> {
+            getLocalization().titleOfAnnouncementDetail -> {
                 getCurrentPage(InventoryPage.ANNOUNCEMENTS)?.onItemClicked(event)
             }
 

@@ -1,18 +1,33 @@
 package games.dripdrop.simustock.presenter.interfaces
 
+import games.dripdrop.simustock.model.constants.InventoryPage
+import games.dripdrop.simustock.view.gui.GuiManager
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
+import org.bukkit.entity.HumanEntity
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 abstract class AbstractGuiManager {
+    protected var mInventoryCellsAmount = 0
+
     // 处理物品点击事件
     open fun onItemClicked(event: InventoryClickEvent) = Unit
 
+    // 初始化页面
+    open fun initView(player: HumanEntity) = Unit
+
+    // 跳转页面
+    open fun toTargetPage(event: InventoryClickEvent, page: InventoryPage) {
+        event.whoClicked.apply {
+            leaveInventory(this)
+            GuiManager.getCurrentPage(page)?.initView(this)
+        }
+    }
+
     // 关闭容器
-    open fun leaveInventory(player: Player) {
+    open fun leaveInventory(player: HumanEntity) {
         player.closeInventory()
     }
 
