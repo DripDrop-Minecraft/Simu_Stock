@@ -1,4 +1,4 @@
-package games.dripdrop.simustock.presenter.interact.gui
+package games.dripdrop.simustock.view.gui
 
 import games.dripdrop.simustock.model.constants.InventoryPage
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
@@ -8,12 +8,15 @@ import org.bukkit.event.inventory.InventoryClickEvent
 
 object GuiManager {
     private val mPageMap = mapOf(
-        InventoryPage.HOMEPAGE to Homepage()
+        InventoryPage.HOMEPAGE to Homepage(),
+        InventoryPage.COMPANIES to CompanyListPage(),
+        InventoryPage.COMPANY_DETAIL to CompanyDetailPage(),
+        InventoryPage.ANNOUNCEMENTS to AnnouncementPage(),
+        InventoryPage.MY_ACCOUNT to AccountPage()
     )
 
     fun onClicked(event: InventoryClickEvent) {
-        PluginLogManager.i("inventory click event passed")
-        PluginLogManager.i("current clicked position is [${event.rawSlot}]")
+        PluginLogManager.i("inventory click event passed, position = [${event.rawSlot}]")
         when (event.view.originalTitle) {
             getLocalization().exchangeName -> {
                 getCurrentPage(InventoryPage.HOMEPAGE)?.onItemClicked(event)
@@ -23,8 +26,16 @@ object GuiManager {
                 getCurrentPage(InventoryPage.COMPANIES)?.onItemClicked(event)
             }
 
+            getLocalization().titleOfCompanyDetail -> {
+                getCurrentPage(InventoryPage.COMPANY_DETAIL)?.onItemClicked(event)
+            }
+
             getLocalization().titleOfExchangeAnnouncement -> {
                 getCurrentPage(InventoryPage.ANNOUNCEMENTS)?.onItemClicked(event)
+            }
+
+            getLocalization().titleOfMyAccount -> {
+                getCurrentPage(InventoryPage.MY_ACCOUNT)?.onItemClicked(event)
             }
 
             else -> Unit
@@ -37,6 +48,7 @@ object GuiManager {
         PluginLogManager.i("current inventory title: $title")
         return listOf(
             getLocalization().exchangeName, getLocalization().titleOfCompanyList,
+            getLocalization().titleOfCompanyDetail, getLocalization().titleOfAnnouncementDetail,
             getLocalization().titleOfMyAccount, getLocalization().titleOfExchangeAnnouncement
         ).contains(title)
     }

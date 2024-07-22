@@ -1,7 +1,9 @@
-package games.dripdrop.simustock.presenter.interact.gui
+package games.dripdrop.simustock.view.gui
 
+import games.dripdrop.simustock.model.constants.InventoryPage
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
 import games.dripdrop.simustock.presenter.interfaces.AbstractGuiManager
+import games.dripdrop.simustock.presenter.utils.TextFormatManager
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -31,7 +33,8 @@ class Homepage : AbstractGuiManager() {
             }
 
             Material.BELL -> {
-                player.sendMessage(Component.text("查看交易所公告"))
+                (GuiManager.getCurrentPage(InventoryPage.ANNOUNCEMENTS) as? AnnouncementPage)
+                    ?.setAnnouncementPage(player)
             }
 
             Material.PLAYER_HEAD -> {
@@ -57,7 +60,7 @@ class Homepage : AbstractGuiManager() {
     }
 
     private fun formatContentOfGuidance(): List<Component> {
-        val guidance = getLocalization().contentOfGuidance
+        val guidance = TextFormatManager.formatLongText(getLocalization().contentOfGuidance)
         val list = arrayListOf<Component>()
         guidance.split(Regex("\\n")).apply {
             onEachIndexed { index, s ->
@@ -69,7 +72,7 @@ class Homepage : AbstractGuiManager() {
     }
 
     private fun createCompanyListButton(): ItemStack =
-        createIcon(Material.DIAMOND, getLocalization().titleOfCompanyList)
+        createIcon(Material.CAKE, getLocalization().titleOfCompanyList)
 
     private fun createAnnouncementButton(): ItemStack =
         createIcon(Material.BELL, getLocalization().titleOfExchangeAnnouncement)

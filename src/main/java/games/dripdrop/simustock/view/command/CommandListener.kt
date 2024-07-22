@@ -1,4 +1,4 @@
-package games.dripdrop.simustock.presenter.interact.command
+package games.dripdrop.simustock.view.command
 
 import games.dripdrop.simustock.presenter.interfaces.ICommand
 import org.bukkit.command.Command

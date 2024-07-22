@@ -1,7 +1,7 @@
-package games.dripdrop.simustock.presenter.interact.command
+package games.dripdrop.simustock.view.command
 
-import games.dripdrop.simustock.presenter.interact.gui.GuiManager
-import games.dripdrop.simustock.presenter.interact.gui.GuiManager.getSpecifiedTitleList
+import games.dripdrop.simustock.view.gui.GuiManager
+import games.dripdrop.simustock.view.gui.GuiManager.getSpecifiedTitleList
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

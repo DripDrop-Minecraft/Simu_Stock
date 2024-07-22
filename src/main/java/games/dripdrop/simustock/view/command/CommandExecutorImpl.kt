@@ -1,5 +1,6 @@
-package games.dripdrop.simustock.presenter.interact.command
+package games.dripdrop.simustock.view.command
 
+import games.dripdrop.simustock.model.bean.Announcement
 import games.dripdrop.simustock.model.bean.Company
 import games.dripdrop.simustock.model.constants.InventoryPage
 import games.dripdrop.simustock.model.constants.PluginCommands.*
@@ -8,18 +9,17 @@ import games.dripdrop.simustock.presenter.SystemService
 import games.dripdrop.simustock.presenter.SystemService.getConfig
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
 import games.dripdrop.simustock.presenter.SystemService.getRootPath
-import games.dripdrop.simustock.presenter.interact.gui.GuiManager
-import games.dripdrop.simustock.presenter.interact.gui.Homepage
 import games.dripdrop.simustock.presenter.interfaces.ICommand
 import games.dripdrop.simustock.presenter.utils.JsonManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
+import games.dripdrop.simustock.presenter.utils.TextFormatManager
+import games.dripdrop.simustock.view.gui.GuiManager
+import games.dripdrop.simustock.view.gui.Homepage
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CommandExecutorImpl : ICommand {
     private val mCommandListForOp = listOf(
@@ -38,7 +38,7 @@ class CommandExecutorImpl : ICommand {
             HELP.command == args?.first() -> sender.help()
             GUI.command == args?.first() -> sender.openGui()
             IMPORT_COMPANIES.command == args?.first() -> sender.importCompanies()
-            ANNOUNCE.command == args?.first() -> sender.publishAnnouncement(args.getOrNull(1) ?: "NULL")
+            ANNOUNCE.command == args?.first() -> sender.publishAnnouncement(args)
         }
     }
 
@@ -86,10 +86,16 @@ class CommandExecutorImpl : ICommand {
         sendMessage(getLocalization().companiesImported)
     }
 
-    override fun CommandSender.publishAnnouncement(content: String) {
-        PluginLogManager.i("announcement [$content] published by [$name]")
-        // TODO: 插入公告信息
-        val tag = "${getDateTime()} ${getLocalization().announcementFromExchange}"
+    override fun CommandSender.publishAnnouncement(args: Array<out String>) {
+        val tag = "${TextFormatManager.createDateTime()} ${getLocalization().announcementFromExchange}"
+        val title = args.getOrNull(1)
+        val content = args.getOrNull(2)
+        PluginLogManager.i("announcement [$title] published by [$name]")
+        if (title.isNullOrEmpty() || content.isNullOrEmpty()) {
+            sendMessage("${ChatColor.RED}${getLocalization().announcementException}")
+            return
+        }
+        SystemService.getSQLiteManager().insertAnnouncement(Announcement(title = title, content = content))
         Bukkit.broadcast(Component.text("${ChatColor.GREEN}[$tag] ${ChatColor.YELLOW}$content"))
     }
 
@@ -105,9 +111,5 @@ class CommandExecutorImpl : ICommand {
             ANNOUNCE.command -> getLocalization().descForAnnounce
             else -> "NULL"
         }
-    }
-
-    private fun getDateTime(): String {
-        return SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.PRC).format(Date())
     }
 }
