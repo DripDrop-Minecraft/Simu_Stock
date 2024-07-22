@@ -213,7 +213,7 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
     fun insertAnnouncement(vararg announcements: Announcement) {
         getDataSource()?.connection?.batch(createInsertAllDataSQL<Announcement>()) { ps ->
             announcements.onEach {
-                listOf(it.timestamp, it.content).apply { ps.setAllPropsOnce<Asset>(this) }
+                listOf(it.timestamp, it.title, it.content).apply { ps.setAllPropsOnce<Announcement>(this) }
                 ps.addBatch()
             }
         }
