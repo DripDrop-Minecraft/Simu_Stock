@@ -16,5 +16,9 @@ data class SystemConfig(
     // 数据库账号密码
     var databasePassword: String = "",
     // 是否休市
-    var isMarketClosed: Boolean = false
+    var isMarketClosed: Boolean = false,
+    // 开盘时间
+    var openingTime: String = "09:30",
+    // 收盘时间
+    var endingTime: String = "20:00"
 )

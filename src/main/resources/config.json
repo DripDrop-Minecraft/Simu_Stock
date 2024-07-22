@@ -3,12 +3,12 @@
   "stampDutyRate": 0.001,
   "minimumTransactionFee": 5.0,
   "maximumTransactionFeeRate": 0.005,
-  "exchangeName": "DripDrop证券交易所",
-  "securitiesDealerName": "DripDrop信投",
   "administrators": [
     "CONSOLE"
   ],
   "databaseAccount": "",
   "databasePassword": "",
-  "isMarketClosed": true
+  "isMarketClosed": true,
+  "openingTime": "09:30",
+  "endingTime": "20:00"
 }
