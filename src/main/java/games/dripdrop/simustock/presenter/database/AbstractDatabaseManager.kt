@@ -6,7 +6,7 @@ import com.zaxxer.hikari.util.IsolationLevel
 import games.dripdrop.simustock.model.bean.ColumnProp
 import games.dripdrop.simustock.presenter.interfaces.IDatabase
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
-import games.dripdrop.simustock.presenter.utils.UniqueIDManager
+import games.dripdrop.simustock.presenter.utils.TextFormatManager
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -112,7 +112,7 @@ abstract class AbstractDatabaseManager : IDatabase {
 
     protected inline fun <reified T> createDeleteWithConditionSQL(hasConditions: Boolean): StringBuilder {
         return StringBuilder("DELETE FROM ")
-            .append(UniqueIDManager.createTableName<T>())
+            .append(TextFormatManager.createTableName<T>())
             .apply {
                 if (hasConditions) {
                     append(" WHERE ")
@@ -122,7 +122,7 @@ abstract class AbstractDatabaseManager : IDatabase {
 
     protected inline fun <reified T> createQueryWithConditionSQL(hasConditions: Boolean): StringBuilder {
         return StringBuilder("SELECT * FROM ")
-            .append(UniqueIDManager.createTableName<T>())
+            .append(TextFormatManager.createTableName<T>())
             .apply {
                 if (hasConditions) {
                     append(" WHERE ")
@@ -132,7 +132,7 @@ abstract class AbstractDatabaseManager : IDatabase {
 
     protected inline fun <reified T> createUpdateWithConditionSQL(map: Map<String, Any>): StringBuilder {
         return StringBuilder(StringBuilder("UPDATE ")
-            .append(UniqueIDManager.createTableName<T>())
+            .append(TextFormatManager.createTableName<T>())
             .append(" SET ")
             .apply {
                 map.keys.onEach { append("$it = ?, ") }
@@ -142,7 +142,7 @@ abstract class AbstractDatabaseManager : IDatabase {
 
     protected inline fun <reified T> createInsertAllDataSQL(): String {
         return StringBuilder("INSERT INTO ")
-            .append(UniqueIDManager.createTableName<T>())
+            .append(TextFormatManager.createTableName<T>())
             .append(" VALUES (")
             .apply {
                 repeat(T::class.java.declaredFields.size) {
