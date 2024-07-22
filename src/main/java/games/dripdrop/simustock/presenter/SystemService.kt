@@ -9,6 +9,7 @@ import games.dripdrop.simustock.presenter.engine.SystemExchange
 import games.dripdrop.simustock.presenter.engine.SystemSecuritiesDealer
 import games.dripdrop.simustock.presenter.interfaces.IExchange
 import games.dripdrop.simustock.presenter.interfaces.ISecuritiesDealer
+import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.JsonManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
 import kotlinx.coroutines.*
@@ -164,12 +165,9 @@ object SystemService {
     }
 
     private fun runStockSystem() {
-        GlobalScope.launch(Dispatchers.IO) {
-            while (true) {
-                PluginLogManager.i("recycle")
-                // TODO
-                delay(90 * 1000L)
-            }
+        CoroutineManager.runOnIOThreadWithPeriod("Global", 90 * 1000L) {
+            PluginLogManager.i("recycle")
+            // TODO
         }
     }
 }

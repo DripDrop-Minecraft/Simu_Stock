@@ -1,9 +1,13 @@
 package games.dripdrop.simustock.presenter.algorithm
 
-import games.dripdrop.simustock.model.bean.Order
 import games.dripdrop.simustock.presenter.interfaces.IAlgorithmManager
 
 internal class AlgorithmManager : IAlgorithmManager {
+    private val mFraud = FraudRiskPriceFluctuationImpl()
+    private val mHigh = HighRiskPriceFluctuationImpl()
+    private val mLow = LowRiskPriceFluctuationImpl()
+    private val mMid = MidRiskPriceFluctuationImpl()
+
     override fun getVolatilePriceForLowRiskLevel(): Double {
         TODO("Not yet implemented")
     }
@@ -17,10 +21,6 @@ internal class AlgorithmManager : IAlgorithmManager {
     }
 
     override fun getVolatilePriceForFraudRiskLevel(): Double {
-        TODO("Not yet implemented")
-    }
-
-    override fun createOrderSequence(): Sequence<Order?> {
         TODO("Not yet implemented")
     }
 }

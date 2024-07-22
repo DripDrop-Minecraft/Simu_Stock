@@ -6,7 +6,7 @@ import games.dripdrop.simustock.model.bean.Order
 import games.dripdrop.simustock.presenter.SystemService.getConfig
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
 import games.dripdrop.simustock.presenter.interfaces.ISecuritiesDealer
-import games.dripdrop.simustock.presenter.utils.UniqueIDManager
+import games.dripdrop.simustock.presenter.utils.TextFormatManager
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.ChatColor
@@ -45,9 +45,7 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
         // 交易额不超过账户余额才能执行买入操作
         return (economy.getBalance(player).compareTo(transaction) >= 0).apply {
             if (!this) {
-                player.sendMessage(
-                    "${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().insufficientFunds}"
-                )
+                player.sendMessage("${ChatColor.RED}${getLocalization().insufficientFunds}")
             }
         }
     }
@@ -75,12 +73,8 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
         dealingPrice: Double,
         isBuying: Boolean
     ): Order {
-        if (dealingAmount <= 0 || (0.0).compareTo(dealingPrice) >= 0) {
-            player.sendMessage("${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().invalidOrder}")
-            throw IllegalArgumentException("Invalid dealingAmount[$dealingAmount] or dealingPrice[$dealingPrice]")
-        }
         return Order(
-            UniqueIDManager.createOrderNumber(),
+            TextFormatManager.createOrderNumber(),
             System.currentTimeMillis(),
             company.name,
             company.stockCode,
@@ -93,9 +87,7 @@ internal class SystemSecuritiesDealer(private val economy: Economy) : ISecuritie
     private fun EconomyResponse.transactionFailed(player: Player): Boolean {
         return transactionSuccess().apply {
             if (this) {
-                player.sendMessage(
-                    "${ChatColor.GREEN}[SimuStock] ${ChatColor.RED}${getLocalization().failedTransaction}${errorMessage}"
-                )
+                player.sendMessage("${ChatColor.RED}${getLocalization().failedTransaction}${errorMessage}")
             }
         }
     }

@@ -9,7 +9,12 @@ import org.bukkit.inventory.ItemStack
 
 abstract class AbstractGuiManager {
     // 处理物品点击事件
-    abstract fun onItemClicked(event: InventoryClickEvent)
+    open fun onItemClicked(event: InventoryClickEvent) = Unit
+
+    // 关闭容器
+    open fun leaveInventory(player: Player) {
+        player.closeInventory()
+    }
 
     // 创建容器
     @Throws(IllegalArgumentException::class)
@@ -27,10 +32,5 @@ abstract class AbstractGuiManager {
             throw IllegalArgumentException("Invalid item position [$position]")
         }
         inv.setItem(position, item)
-    }
-
-    // 关闭容器
-    fun leaveInventory(player: Player) {
-        player.closeInventory()
     }
 }

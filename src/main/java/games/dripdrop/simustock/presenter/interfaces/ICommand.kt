@@ -19,5 +19,5 @@ interface ICommand {
     fun CommandSender.importCompanies()
 
     // 发布公告
-    fun CommandSender.publishAnnouncement(content: String)
+    fun CommandSender.publishAnnouncement(args: Array<out String>)
 }
