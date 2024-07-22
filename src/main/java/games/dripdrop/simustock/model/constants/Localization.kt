@@ -24,5 +24,6 @@ data class Localization(
     val titleOfCompanyDetail: String = "股票详情",
     val titleOfAnnouncementDetail: String = "公告详情",
     val announcementException: String = "请输入公告标题和公告内容，两者以空格分隔",
-    val notTradingTime: String = "当前不在交易时间段内！"
+    val notTradingTime: String = "当前不在交易时间段内！",
+    val backToLastPage: String = "返回上一页"
 )

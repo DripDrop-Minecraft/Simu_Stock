@@ -22,5 +22,6 @@
     "titleOfCompanyDetail": "股票详情",
     "titleOfAnnouncementDetail": "公告详情",
     "announcementException": "请输入公告标题和公告内容，两者以空格分隔",
-    "notTradingTime": "当前不在交易时间段内！"
+    "notTradingTime": "当前不在交易时间段内！",
+    "backToLastPage": "返回上一页"
 }
