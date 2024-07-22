@@ -4,7 +4,9 @@ import games.dripdrop.simustock.model.bean.Announcement
 import games.dripdrop.simustock.model.constants.InventoryPage
 import games.dripdrop.simustock.presenter.SystemService
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
+import games.dripdrop.simustock.presenter.SystemService.getPlugin
 import games.dripdrop.simustock.presenter.interfaces.AbstractGuiManager
+import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.TextFormatManager
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -44,13 +46,17 @@ class AnnouncementPage : AbstractGuiManager() {
     }
 
     private fun refreshAllAnnouncements(inventory: Inventory) {
-        SystemService.getSQLiteManager().queryAllAnnouncements {
-            it.take(mAnnounceAmount).onEachIndexed { index, announcement ->
-                addAnItem(inventory, index, createPaperItem(announcement))
-            }
-        }
         repeat(mInventoryCellsAmount - mAnnounceAmount) {
             addAnItem(inventory, mAnnounceAmount + it, createGlassPane())
+        }
+        CoroutineManager.runOnIOThread(InventoryPage.ANNOUNCEMENTS.name) {
+            SystemService.getSQLiteManager().queryAllAnnouncements {
+                it.take(mAnnounceAmount).onEachIndexed { index, announcement ->
+                    CoroutineManager.runOnUiThread(getPlugin()) {
+                        addAnItem(inventory, index, createPaperItem(announcement))
+                    }
+                }
+            }
         }
     }
 

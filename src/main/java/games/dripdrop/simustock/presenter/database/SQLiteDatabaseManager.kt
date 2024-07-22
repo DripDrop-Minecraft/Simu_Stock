@@ -37,7 +37,12 @@ class SQLiteDatabaseManager : AbstractDatabaseManager() {
                 if (it != null) {
                     listOf(
                         TextFormatManager.createStockCode(), it.name, it.desc, it.currentStockNum, it.currentPrice,
-                        it.isListed, it.riskLevel, it.availableFunds, it.debt, it.listedTime, it.delistedTime
+                        it.isListed,
+                        it.riskLevel,
+                        it.availableFunds,
+                        it.debt,
+                        System.currentTimeMillis(),
+                        it.delistedTime
                     ).apply { ps.setAllPropsOnce<Company>(this) }
                     ps.addBatch()
                 }

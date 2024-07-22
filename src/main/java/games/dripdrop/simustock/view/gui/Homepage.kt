@@ -40,7 +40,7 @@ class Homepage : AbstractGuiManager() {
     private fun dispatchAction(material: Material, event: InventoryClickEvent) {
         when (material) {
             Material.BOOK -> event.whoClicked.openBook(createGuidance())
-            Material.CAKE -> toTargetPage(event, InventoryPage.COMPANY_DETAIL)
+            Material.CAKE -> toTargetPage(event, InventoryPage.COMPANIES)
             Material.BELL -> toTargetPage(event, InventoryPage.ANNOUNCEMENTS)
             Material.PLAYER_HEAD -> toTargetPage(event, InventoryPage.MY_ACCOUNT)
             else -> Unit
@@ -72,7 +72,7 @@ class Homepage : AbstractGuiManager() {
                 
                 ${ChatColor.BLACK}1）交易佣金最低收取5.0游戏币，最高不超过交易金额的${getConfig().maximumTransactionFeeRate * 100}%；
                 ${ChatColor.BLACK}2）当前每笔交易佣金费率为${getConfig().commissionRate * 100}%；
-                ${ChatColor.BLACK}3）当前每笔交易印花税率为${getConfig().stampDutyRate * 100}%。
+                ${ChatColor.BLACK}3）当前每笔交易向${ChatColor.RED}买方${ChatColor.BLACK}征收印花税的税率为${getConfig().stampDutyRate * 100}%。
             """.trimIndent()
             ),
             Component.text(
