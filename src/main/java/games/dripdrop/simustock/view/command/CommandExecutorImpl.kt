@@ -10,6 +10,7 @@ import games.dripdrop.simustock.presenter.SystemService.getConfig
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
 import games.dripdrop.simustock.presenter.SystemService.getRootPath
 import games.dripdrop.simustock.presenter.interfaces.ICommand
+import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.JsonManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
 import games.dripdrop.simustock.presenter.utils.TextFormatManager
@@ -71,9 +72,12 @@ class CommandExecutorImpl : ICommand {
 
     override fun CommandSender.importCompanies() {
         sendMessage(getLocalization().importingCompanies)
-        SystemService.getSQLiteManager().insertCompanies(
-            JsonManager.getObjectList<Company>(getRootPath(), PluginFile.COMPANY_LIST_FILE)
-        )
+        CoroutineManager.runOnIOThread(IMPORT_COMPANIES.command) {
+            val path = "${getRootPath()}${PluginFile.COMPANY_LIST_FILE.fileName}"
+            SystemService.getSQLiteManager().insertCompanies(
+                JsonManager.getObjectList<Company>(path, PluginFile.COMPANY_LIST_FILE)
+            )
+        }
         sendMessage(getLocalization().companiesImported)
     }
 
@@ -86,7 +90,9 @@ class CommandExecutorImpl : ICommand {
             sendMessage("${ChatColor.RED}${getLocalization().announcementException}")
             return
         }
-        SystemService.getSQLiteManager().insertAnnouncement(Announcement(title = title, content = content))
+        CoroutineManager.runOnIOThread(ANNOUNCE.command) {
+            SystemService.getSQLiteManager().insertAnnouncement(Announcement(title = title, content = content))
+        }
         Bukkit.broadcast(Component.text("${ChatColor.GREEN}[$tag] ${ChatColor.YELLOW}$content"))
     }
 

@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 abstract class AbstractGuiManager {
-    protected var mInventoryCellsAmount = 0
+    protected var mInventoryCellsAmount = 54
 
     // 处理物品点击事件
     open fun onItemClicked(event: InventoryClickEvent) = Unit
@@ -25,6 +25,9 @@ abstract class AbstractGuiManager {
             GuiManager.getCurrentPage(page)?.initView(this)
         }
     }
+
+    // 翻页
+    open fun changePage(isPrevious: Boolean = false) = Unit
 
     // 关闭容器
     open fun leaveInventory(player: HumanEntity) {

@@ -40,7 +40,7 @@ class Homepage : AbstractGuiManager() {
     private fun dispatchAction(material: Material, event: InventoryClickEvent) {
         when (material) {
             Material.BOOK -> event.whoClicked.openBook(createGuidance())
-            Material.CAKE -> toTargetPage(event, InventoryPage.COMPANY_DETAIL)
+            Material.CAKE -> toTargetPage(event, InventoryPage.COMPANIES)
             Material.BELL -> toTargetPage(event, InventoryPage.ANNOUNCEMENTS)
             Material.PLAYER_HEAD -> toTargetPage(event, InventoryPage.MY_ACCOUNT)
             else -> Unit

@@ -1,10 +1,18 @@
 package games.dripdrop.simustock.presenter.utils
 
 import kotlinx.coroutines.*
+import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
 
 object CoroutineManager {
     private var mCoroutineScope = MainScope()
     private val mCoroutineMap: HashMap<String, Job?> = hashMapOf()
+
+    fun runOnUiThread(plugin: JavaPlugin, action: () -> Unit) {
+        Bukkit.getScheduler().runTask(plugin, Runnable {
+            action()
+        })
+    }
 
     fun runOnIOThread(tag: String, action: () -> Unit) {
         runCoroutine(tag) { action() }

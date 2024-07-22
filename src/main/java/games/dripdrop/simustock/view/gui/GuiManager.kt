@@ -10,7 +10,7 @@ object GuiManager {
     private val mPageMap = mapOf(
         InventoryPage.HOMEPAGE to Homepage(),
         InventoryPage.COMPANIES to CompanyListPage(),
-        InventoryPage.COMPANY_DETAIL to CompanyDetailPage(),
+        InventoryPage.TRADING to StockTradingPage(),
         InventoryPage.ANNOUNCEMENTS to AnnouncementPage(),
         InventoryPage.MY_ACCOUNT to AccountPage()
     )
@@ -27,7 +27,7 @@ object GuiManager {
             }
 
             getLocalization().titleOfCompanyDetail -> {
-                getCurrentPage(InventoryPage.COMPANY_DETAIL)?.onItemClicked(event)
+                getCurrentPage(InventoryPage.TRADING)?.onItemClicked(event)
             }
 
             getLocalization().titleOfAnnouncementDetail -> {
