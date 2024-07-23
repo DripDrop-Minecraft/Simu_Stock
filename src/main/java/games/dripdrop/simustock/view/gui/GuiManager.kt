@@ -12,7 +12,8 @@ object GuiManager {
         InventoryPage.COMPANIES to CompanyListPage(),
         InventoryPage.TRADING to StockTradingPage(),
         InventoryPage.ANNOUNCEMENTS to AnnouncementPage(),
-        InventoryPage.MY_ACCOUNT to AccountPage()
+        InventoryPage.MY_ACCOUNT to AccountPage(),
+        InventoryPage.BANK to BankPage()
     )
 
     fun onClicked(event: InventoryClickEvent) {
@@ -38,6 +39,10 @@ object GuiManager {
                 getCurrentPage(InventoryPage.MY_ACCOUNT)?.onItemClicked(event)
             }
 
+            getLocalization().titleOfBank -> {
+                getCurrentPage(InventoryPage.BANK)?.onItemClicked(event)
+            }
+
             else -> Unit
         }
     }
@@ -45,11 +50,12 @@ object GuiManager {
     fun getCurrentPage(page: InventoryPage): AbstractGuiManager? = mPageMap[page]
 
     fun getSpecifiedTitleList(title: String): Boolean {
-        PluginLogManager.i("current inventory title: $title")
+        PluginLogManager.d("current inventory title: $title")
         return listOf(
             getLocalization().exchangeName, getLocalization().titleOfCompanyList,
             getLocalization().titleOfCompanyDetail, getLocalization().titleOfAnnouncementDetail,
-            getLocalization().titleOfMyAccount, getLocalization().titleOfExchangeAnnouncement
+            getLocalization().titleOfMyAccount, getLocalization().titleOfExchangeAnnouncement,
+            getLocalization().titleOfBank
         ).contains(title)
     }
 }
