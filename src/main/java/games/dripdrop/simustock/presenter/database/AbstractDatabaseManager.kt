@@ -47,7 +47,7 @@ abstract class AbstractDatabaseManager : IDatabase {
         map: Map<Int, Any>,
         callback: (ResultSet) -> Unit
     ) {
-        PluginLogManager.i("sql of query called")
+        PluginLogManager.d("sql of query: $sql")
         use {
             try {
                 prepareStatement(sql).apply {
@@ -61,7 +61,7 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     override fun Connection.update(sql: String, map: Map<Int, Any>, callback: (Int) -> Unit) {
-        PluginLogManager.i("sql of update called")
+        PluginLogManager.d("sql of update: $sql")
         use {
             try {
                 prepareStatement(sql).apply {
@@ -75,12 +75,12 @@ abstract class AbstractDatabaseManager : IDatabase {
     }
 
     override fun Connection.batch(sql: String, callback: (PreparedStatement) -> Unit) {
-        PluginLogManager.i("sql of batch called")
+        PluginLogManager.d("sql of batch: $sql")
         use {
             try {
                 prepareStatement(sql).use {
                     callback(it)
-                    it.executeBatch().apply { PluginLogManager.i("size of batch results = $size") }
+                    it.executeBatch().apply { PluginLogManager.d("size of batch results = $size") }
                 }
             } catch (e: Exception) {
                 PluginLogManager.e("failed to batch: ${e.localizedMessage}")

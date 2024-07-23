@@ -37,13 +37,13 @@ public final class SimuStockPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(mEventListener, this);
         mLogger.i("register command listener...");
         PluginCommand mCommandName = getCommand(CommandListenerKt.commandName);
-        mLogger.i("command name is not null: " + (mCommandName != null));
+        mLogger.d("command name is not null: " + (mCommandName != null));
         if (mCommandName != null) {
             mCommandName.setExecutor(mCommandListener);
             mCommandName.setTabCompleter(mCommandListener);
         }
         PluginCommand mCommandAlias = getCommand(CommandListenerKt.commandAlias);
-        mLogger.i("command alias is not null: " + (mCommandAlias != null));
+        mLogger.d("command alias is not null: " + (mCommandAlias != null));
         if (mCommandAlias != null) {
             mCommandAlias.setExecutor(mCommandListener);
             mCommandAlias.setTabCompleter(mCommandListener);

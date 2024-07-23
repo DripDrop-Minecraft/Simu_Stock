@@ -21,7 +21,7 @@ object JsonManager {
 
 
     inline fun <reified T> getObjectList(path: String, flag: PluginFile): List<T?> {
-        PluginLogManager.i("type = ${T::class.java.simpleName}, file path = [$path]")
+        PluginLogManager.d("type = ${T::class.java.simpleName}, file path = [$path]")
         if (!checkFileOrDirectoryAvailable(File(path.replace(flag.fileName, "")), flag)) {
             return emptyList()
         }
@@ -34,7 +34,7 @@ object JsonManager {
     }
 
     inline fun <reified T> getSingleObject(path: String, flag: PluginFile, defaultValue: T): T {
-        PluginLogManager.i("type = ${T::class.java.simpleName}, file path = [$path]")
+        PluginLogManager.d("type = ${T::class.java.simpleName}, file path = [$path]")
         if (!checkFileOrDirectoryAvailable(File(path.replace(flag.fileName, "")), flag)) {
             return defaultValue
         }
@@ -47,7 +47,7 @@ object JsonManager {
     }
 
     fun readJsonFromFile(path: String): String {
-        PluginLogManager.i("try to read json string from file [$path]")
+        PluginLogManager.d("try to read json string from file [$path]")
         return try {
             BufferedReader(InputStreamReader(FileInputStream(path), Charset.defaultCharset().name())).use {
                 val sb = StringBuilder()
@@ -66,18 +66,18 @@ object JsonManager {
     }
 
     fun checkFileOrDirectoryAvailable(directory: File, file: PluginFile): Boolean {
-        PluginLogManager.i("checkFileOrDirectoryAvailable called: ${directory.path}")
+        PluginLogManager.d("checkFileOrDirectoryAvailable called: ${directory.path}")
         return try {
             if (directory.isDirectory && !directory.exists()) {
                 directory.mkdir()
             }
-            PluginLogManager.i("directory [$directory] exists: ${directory.exists()}")
+            PluginLogManager.d("directory [$directory] exists: ${directory.exists()}")
             val f = File(directory, file.fileName)
-            PluginLogManager.i("file [$f] exists: ${f.exists()}")
+            PluginLogManager.d("file [$f] exists: ${f.exists()}")
             if (directory.exists() && !f.exists()) {
                 javaClass.getResourceAsStream("/${file.fileName}")?.let {
                     val result = Files.copy(it, f.toPath())
-                    PluginLogManager.i("file copy result: $result")
+                    PluginLogManager.d("file copy result: $result")
                 }
             }
             f.exists()
