@@ -6,4 +6,5 @@ enum class InventoryPage {
     TRADING,
     ANNOUNCEMENTS,
     MY_ACCOUNT,
+    BANK
 }

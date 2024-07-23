@@ -25,5 +25,12 @@ data class Localization(
     val titleOfAnnouncementDetail: String = "公告详情",
     val announcementException: String = "请输入公告标题和公告内容，两者以空格分隔",
     val notTradingTime: String = "当前不在交易时间段内！",
-    val backToLastPage: String = "返回上一页"
+    val backToLastPage: String = "返回上一页",
+    val goToNextPage: String = "前往下一页",
+    val backToHomepage: String = "返回首页",
+    val refresh: String = "刷新",
+    val stockCode: String = "股票代码",
+    val listedTime: String = "上市时间",
+    val currentPrice: String = "当前股价",
+    val titleOfBank: String = "DripDrop中央银行"
 )
