@@ -2,9 +2,6 @@ package games.dripdrop.simustock.view.gui
 
 import games.dripdrop.simustock.model.bean.Announcement
 import games.dripdrop.simustock.model.constants.InventoryPage
-import games.dripdrop.simustock.presenter.SystemService
-import games.dripdrop.simustock.presenter.SystemService.getLocalization
-import games.dripdrop.simustock.presenter.SystemService.getPlugin
 import games.dripdrop.simustock.presenter.interfaces.AbstractGuiManager
 import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.TextFormatManager
@@ -50,7 +47,7 @@ class AnnouncementPage : AbstractGuiManager() {
             addAnItem(inventory, mAnnounceAmount + it, createGlassPane())
         }
         CoroutineManager.runOnIOThread(InventoryPage.ANNOUNCEMENTS.name) {
-            SystemService.getSQLiteManager().queryAllAnnouncements {
+            getSQLite().queryAllAnnouncements {
                 it.take(mAnnounceAmount).onEachIndexed { index, announcement ->
                     CoroutineManager.runOnUiThread(getPlugin()) {
                         addAnItem(inventory, index, createPaperItem(announcement))

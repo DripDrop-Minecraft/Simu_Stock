@@ -6,9 +6,9 @@ import java.util.*
 object TextFormatManager {
 
     fun createStockCode(): String {
-        return StringBuilder(UUID.randomUUID().toString().substring(0, 4).uppercase())
+        return StringBuilder("DD")
             .append(SimpleDateFormat("yyMMddHHmm", Locale.PRC).format(Date()))
-            .append("DD")
+            .append(UUID.randomUUID().toString().split(Regex("-")).first().uppercase())
             .toString()
     }
 

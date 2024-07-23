@@ -1,16 +1,23 @@
 package games.dripdrop.simustock.presenter.interfaces
 
 import games.dripdrop.simustock.model.constants.InventoryPage
+import games.dripdrop.simustock.presenter.SystemService
 import games.dripdrop.simustock.view.gui.GuiManager
+import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
 abstract class AbstractGuiManager {
     protected var mInventoryCellsAmount = 54
+
+    companion object {
+        var data: HashMap<String, Any?> = hashMapOf()
+    }
 
     // 处理物品点击事件
     open fun onItemClicked(event: InventoryClickEvent) = Unit
@@ -43,6 +50,11 @@ abstract class AbstractGuiManager {
         return Bukkit.createInventory(null, itemAmount, Component.text(title))
     }
 
+    // 创建指定类型的容器
+    fun createTypedInventory(type: InventoryType, title: String): Inventory {
+        return Bukkit.createInventory(null, type, Component.text(title))
+    }
+
     // 添加物品
     @Throws(IllegalArgumentException::class)
     fun addAnItem(inv: Inventory, position: Int, item: ItemStack) {
@@ -50,5 +62,23 @@ abstract class AbstractGuiManager {
             throw IllegalArgumentException("Invalid item position [$position]")
         }
         inv.setItem(position, item)
+    }
+
+    protected fun getLocalization() = SystemService.getLocalization()
+
+    protected fun getConfig() = SystemService.getConfig()
+
+    protected fun getSQLite() = SystemService.getSQLiteManager()
+
+    protected fun getPlugin() = SystemService.getPlugin()
+
+    protected fun createABook(title: String, author: String, vararg contents: String): Book {
+        return Book.book(
+            Component.text(title),
+            Component.text(author),
+            arrayListOf<Component>().apply {
+                contents.onEach { add(Component.text(it)) }
+            }
+        )
     }
 }
