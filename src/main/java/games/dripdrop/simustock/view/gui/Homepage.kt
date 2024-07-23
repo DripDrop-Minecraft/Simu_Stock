@@ -24,7 +24,11 @@ class Homepage : AbstractGuiManager() {
     )
 
     override fun onItemClicked(event: InventoryClickEvent) {
-        dispatchAction(mIconList[event.rawSlot].type, event)
+        if (event.rawSlot in 0..mIconList.lastIndex) {
+            dispatchAction(mIconList[event.rawSlot].type, event)
+        } else {
+            Unit
+        }
     }
 
     override fun initView(player: HumanEntity) {
