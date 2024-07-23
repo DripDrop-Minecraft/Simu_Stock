@@ -23,5 +23,12 @@
     "titleOfAnnouncementDetail": "公告详情",
     "announcementException": "请输入公告标题和公告内容，两者以空格分隔",
     "notTradingTime": "当前不在交易时间段内！",
-    "backToLastPage": "返回上一页"
+    "backToLastPage": "返回上一页",
+    "goToNextPage": "前往下一页",
+    "backToHomepage": "返回首页",
+    "refresh": "刷新",
+    "stockCode": "股票代码",
+    "listedTime": "上市时间",
+    "currentPrice": "当前股价",
+    "titleOfBank": "DripDrop中央银行"
 }
