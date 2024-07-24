@@ -21,4 +21,10 @@ interface IExchange {
 
     // 检查是否能进行交易
     fun checkTradingTime(player: Player, action: () -> Unit)
+
+    // 周期性获取现实世界股票指数
+    fun fetchStockIndexDataPeriod()
+
+    // 运行内置股价波动算法
+    fun runFluctuationAlgorithm()
 }

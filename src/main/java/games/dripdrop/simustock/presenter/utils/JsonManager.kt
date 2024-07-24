@@ -2,6 +2,7 @@ package games.dripdrop.simustock.presenter.utils
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import games.dripdrop.simustock.model.constants.PluginFile
 import java.io.BufferedReader
@@ -19,6 +20,15 @@ object JsonManager {
         .disableHtmlEscaping()
         .create()
 
+    inline fun <reified T> JsonObject.toObject(): T? {
+        return try {
+            mGson.fromJson(this, T::class.java)
+        } catch (e: Exception) {
+            PluginLogManager.e("trying to convert JsonObject failed: ${e.localizedMessage}")
+            e.printStackTrace()
+            null
+        }
+    }
 
     inline fun <reified T> getObjectList(path: String, flag: PluginFile): List<T?> {
         PluginLogManager.d("type = ${T::class.java.simpleName}, file path = [$path]")

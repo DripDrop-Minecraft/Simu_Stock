@@ -5,8 +5,9 @@ import games.dripdrop.simustock.model.bean.OrderKey
 import games.dripdrop.simustock.model.constants.OrderState
 import games.dripdrop.simustock.presenter.SystemService.getConfig
 import games.dripdrop.simustock.presenter.SystemService.getLocalization
-import games.dripdrop.simustock.presenter.database.SQLiteDatabaseManager
+import games.dripdrop.simustock.presenter.algorithm.AlgorithmManager
 import games.dripdrop.simustock.presenter.interfaces.IExchange
+import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.PluginLogManager
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -14,7 +15,9 @@ import org.bukkit.entity.Player
 import java.text.SimpleDateFormat
 import java.util.*
 
-internal class SystemExchange(private val sqLiteDatabaseManager: SQLiteDatabaseManager) : IExchange {
+internal class SystemExchange : IExchange {
+    private val mAlgorithmManager = AlgorithmManager()
+
     private val mComparatorForBuyer = Comparator<OrderKey> { o1, o2 ->
         // 买入订单先判断谁价高者再判断谁下单早
         return@Comparator if (0 != o1.orderPrice.compareTo(o2.orderPrice)) {
@@ -33,6 +36,8 @@ internal class SystemExchange(private val sqLiteDatabaseManager: SQLiteDatabaseM
     }
     private val mOrderBookForBuyer = TreeMap<OrderKey, Order>(mComparatorForBuyer)
     private val mOrderBookForSeller = TreeMap<OrderKey, Order>(mComparatorForSeller)
+    private val mPeriodMillis = 15 * 60 * 1000L
+    private val mPeriodMillis2 = 90 * 1000L
 
     override fun canTradeNow(): Boolean {
         return try {
@@ -78,6 +83,18 @@ internal class SystemExchange(private val sqLiteDatabaseManager: SQLiteDatabaseM
             action()
         } else {
             player.sendMessage(Component.text("${ChatColor.RED}${getLocalization().notTradingTime}"))
+        }
+    }
+
+    override fun fetchStockIndexDataPeriod() {
+        CoroutineManager.runOnIOThreadWithPeriod("fetchStockIndexDataPeriod", mPeriodMillis) {
+            mAlgorithmManager.fetchStockIndexData()
+        }
+    }
+
+    override fun runFluctuationAlgorithm() {
+        CoroutineManager.runOnIOThreadWithPeriod("runFluctuationAlgorithm", mPeriodMillis2) {
+            // TODO
         }
     }
 }

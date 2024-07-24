@@ -10,5 +10,9 @@
   "databasePassword": "",
   "isMarketClosed": true,
   "openingTime": "09:30",
-  "endingTime": "20:00"
+    "endingTime": "20:00",
+    "lowRiskKeywords": "DJI,IXIC,INX",
+    "middleRisKeywords": "gzGSPTSE,UKX,DAX30,FCHI,N225,ENSEX,E3X,FTSEMIB,AEX",
+    "highRiskKeywords": "MXX,RTS,PSI20,IBEX,ASE,KS11,TWII,FTSTI,FBMKLCI,S51,NZSE50FG,TOP40",
+    "fraudRiskKeywords": "000001,399001,XIN9,HSI"
 }

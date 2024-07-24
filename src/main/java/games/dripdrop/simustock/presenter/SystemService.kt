@@ -22,13 +22,13 @@ import java.io.File
 
 object SystemService {
     private val mSQLiteDatabaseManager = SQLiteDatabaseManager()
-    private lateinit var mPlugin: JavaPlugin
-    private lateinit var mExchange: IExchange
-    private lateinit var mSecuritiesDealer: ISecuritiesDealer
+    private val mExchange = SystemExchange()
     private var mEconomy: Economy? = null
     private var mPermission: Permission? = null
     private var mIsInit: Boolean = false
     private var mRootPath = ""
+    private lateinit var mPlugin: JavaPlugin
+    private lateinit var mSecuritiesDealer: ISecuritiesDealer
 
     fun runSimulatedStockMarket(plugin: JavaPlugin) {
         if (mIsInit) {
@@ -44,6 +44,7 @@ object SystemService {
 
     fun stopSimulatedStockMarket() {
         mSQLiteDatabaseManager.deinitDatabase()
+        CoroutineManager.cancelCoroutine()
         mEconomy = null
         mPermission = null
     }
@@ -140,7 +141,6 @@ object SystemService {
             throw RuntimeException("I cannot run without provided economy service!")
         } else {
             PluginLogManager.i("init IExchange and ISecuritiesDealer objects...")
-            mExchange = SystemExchange(mSQLiteDatabaseManager)
             mSecuritiesDealer = SystemSecuritiesDealer(mEconomy!!)
         }
         mIsInit = true
@@ -165,9 +165,7 @@ object SystemService {
     }
 
     private fun runStockSystem() {
-        CoroutineManager.runOnIOThreadWithPeriod("Global", 90 * 1000L) {
-            PluginLogManager.i("recycle")
-            // TODO
-        }
+        mExchange.fetchStockIndexDataPeriod()
+        mExchange.runFluctuationAlgorithm()
     }
 }

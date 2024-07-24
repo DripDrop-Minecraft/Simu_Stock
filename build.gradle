@@ -41,6 +41,9 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.23.1")
     implementation("org.apache.logging.log4j:log4j-core:2.23.1")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
 }
 
 def targetJavaVersion = 17
@@ -60,6 +63,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.withType(ShadowJar).configureEach {
+    relocate("com.squareup.retrofit2", "games.dripdrop.lib.retrofit")
     relocate("org.apache.logging.log4j", "games.dripdrop.lib.log4j")
     relocate("com.zaxxer", "games.dripdrop.lib.hikaricp")
     relocate("kotlinx", "games.dripdrop.lib.kotlinx")

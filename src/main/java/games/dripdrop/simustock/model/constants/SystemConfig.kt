@@ -20,5 +20,13 @@ data class SystemConfig(
     // 开盘时间
     var openingTime: String = "09:30",
     // 收盘时间
-    var endingTime: String = "20:00"
+    var endingTime: String = "20:00",
+    // 低风险股指
+    var lowRiskKeywords: String = "DJI,IXIC,INX",
+    // 中风险股指
+    var middleRisKeywords: String = "gzGSPTSE,UKX,DAX30,FCHI,N225,ENSEX,E3X,FTSEMIB,AEX",
+    // 高风险股指
+    var highRiskKeywords: String = "MXX,RTS,PSI20,IBEX,ASE,KS11,TWII,FTSTI,FBMKLCI,S51,NZSE50FG,TOP40",
+    // 欺诈性股指
+    var fraudRiskKeywords: String = "000001,399001,XIN9,HSI"
 )

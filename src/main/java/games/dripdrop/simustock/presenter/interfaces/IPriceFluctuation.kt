@@ -12,6 +12,4 @@ interface IPriceFluctuation {
 
     // 根据公司内部因素计算股价波动率
     fun calculateFluctuationRate(company: Company): Double
-
-    //
 }

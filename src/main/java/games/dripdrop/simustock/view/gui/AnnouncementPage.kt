@@ -5,11 +5,11 @@ import games.dripdrop.simustock.model.constants.InventoryPage
 import games.dripdrop.simustock.presenter.interfaces.AbstractGuiManager
 import games.dripdrop.simustock.presenter.utils.CoroutineManager
 import games.dripdrop.simustock.presenter.utils.TextFormatManager
-import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
@@ -17,35 +17,31 @@ class AnnouncementPage : AbstractGuiManager() {
     // 展示近期发布公告的数量上限
     private val mAnnounceAmount = 18
 
-    init {
-        mInventoryCellsAmount = 27
-    }
-
     override fun onItemClicked(event: InventoryClickEvent) {
-        if (event.rawSlot in 18..26 && Material.ORANGE_STAINED_GLASS_PANE == event.currentItem?.type) {
-            toTargetPage(event, InventoryPage.HOMEPAGE)
+        if (event.rawSlot in mAnnounceAmount..<mInventoryCellsAmount) {
+            event.onBottomBarItemClicked(mAnnounceAmount, event.rawSlot)
+        } else {
+            Unit
         }
     }
 
     override fun initView(player: HumanEntity) {
-        createInventory(mInventoryCellsAmount, getLocalization().titleOfAnnouncementDetail).apply {
-            refreshAllAnnouncements(this)
+        createTypedInventory(InventoryType.BARREL, getLocalization().titleOfAnnouncementDetail).apply {
+            setBottomBar(mAnnounceAmount)
+            refreshData(this)
             player.openInventory(this)
         }
     }
 
-    private fun createGlassPane(): ItemStack {
-        return ItemStack(Material.ORANGE_STAINED_GLASS_PANE, 1).apply {
-            itemMeta = itemMeta.apply {
-                displayName(Component.text(getLocalization().backToLastPage))
-            }
+    override fun changePage(isPrevious: Boolean) {
+        if (isPrevious) {
+            // TODO
+        } else {
+            // TODO
         }
     }
 
-    private fun refreshAllAnnouncements(inventory: Inventory) {
-        repeat(mInventoryCellsAmount - mAnnounceAmount) {
-            addAnItem(inventory, mAnnounceAmount + it, createGlassPane())
-        }
+    override fun refreshData(inventory: Inventory) {
         CoroutineManager.runOnIOThread(InventoryPage.ANNOUNCEMENTS.name) {
             getSQLite().queryAllAnnouncements {
                 it.take(mAnnounceAmount).onEachIndexed { index, announcement ->
@@ -58,19 +54,18 @@ class AnnouncementPage : AbstractGuiManager() {
     }
 
     private fun createPaperItem(announcement: Announcement): ItemStack {
-        return ItemStack(Material.PAPER, 1).apply {
-            itemMeta = itemMeta.apply {
-                displayName(Component.text(announcement.title))
-                lore(createFormattedContent(TextFormatManager.formatLongText(announcement.content)))
-            }
-        }
+        return createSimpleButton(
+            Material.PAPER,
+            announcement.title,
+            createFormattedContent(announcement.content)
+        )
     }
 
-    private fun createFormattedContent(content: String): List<Component> {
-        val list = arrayListOf<Component>()
-        content.split(Regex("\\n")).onEach {
-            list.add(Component.text("${ChatColor.YELLOW}$it"))
+    private fun createFormattedContent(content: String): List<String> {
+        return arrayListOf<String>().apply {
+            TextFormatManager.formatLongText(content).split(Regex("\\n")).onEach {
+                add("${ChatColor.YELLOW}$it")
+            }
         }
-        return list
     }
 }
